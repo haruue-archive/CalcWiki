@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="calcwiki">CalcWiki</string>
+    <string name="edit">Edit</string>
+    <string name="not_login">Not Login</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+</resources>
