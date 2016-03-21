@@ -1,11 +1,10 @@
 package org.calcwiki.ui.drawer;
 
 import android.app.Activity;
-import android.support.annotation.DrawableRes;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
@@ -23,6 +22,7 @@ public class MainDrawer {
     DrawerLayout drawerLayout;
     EasyRecyclerView menuList;
     TextView usernameView;
+    ActionBarDrawerToggle toggle;
 
     private MainDrawer() {
 
@@ -69,16 +69,10 @@ public class MainDrawer {
         }
     }
 
-    public void openDrawer() {
-        drawerLayout.openDrawer(GravityCompat.START);
-    }
-
-    public void closeDrawer() {
-        drawerLayout.closeDrawer(GravityCompat.START);
-    }
-
-    public void addDrawerListener(DrawerLayout.DrawerListener listener) {
-        drawerLayout.addDrawerListener(listener);
+    public void setToggle(Activity activity, Toolbar toolbar) {
+        this.toggle = new ActionBarDrawerToggle(activity, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
     }
 
     public void refreshUser() {
