@@ -5,4 +5,16 @@
     <string name="not_login">Not Login</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="logout">Logout</string>
+    <string name="no_network">No Network</string>
+    <string name="account_manage">Account Manage</string>
+    <string name="email">Email</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="please_cleck_network">Please Check Network</string>
+    <string name="main_page">Main Page</string>
+    <string name="recent_changes">Recent Changes</string>
+    <string name="random_article">Random Article</string>
+    <string name="help">Help</string>
+    <string name="interaction">Interaction</string>
 </resources>

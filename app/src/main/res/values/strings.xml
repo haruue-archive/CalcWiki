@@ -7,4 +7,14 @@
     <string name="register">注册</string>
     <string name="logout">登出</string>
     <string name="account_manage">账户管理</string>
+    <string name="no_network">无网络连接</string>
+    <string name="email">电子邮件</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="please_cleck_network">请检查网络连接</string>
+    <string name="main_page">首页</string>
+    <string name="recent_changes">最近更改</string>
+    <string name="random_article">随机页面</string>
+    <string name="help">帮助</string>
+    <string name="interaction">导航</string>
 </resources>

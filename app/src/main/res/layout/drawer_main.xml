@@ -9,23 +9,23 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:background="@color/gray_600">
+        android:background="@color/gray_900">
 
         <LinearLayout
             android:id="@+id/account_manage_buttons_in_drawer_main"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
             android:padding="5dp"
             android:orientation="horizontal">
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/login_button_in_drawer_main"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@color/gray_900"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
                 android:padding="5dp"
+                android:layout_gravity="right"
                 android:layout_margin="2dp"
                 android:gravity="center">
 
@@ -37,15 +37,14 @@
                     android:textSize="20sp"
                     android:maxLines="1"/>
 
-            </com.gc.materialdesign.views.ButtonRectangle>
+            </com.gc.materialdesign.views.ButtonFlat>
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/register_button_in_drawer_main"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@color/gray_900"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
                 android:padding="5dp"
+                android:layout_gravity="right"
                 android:layout_margin="2dp"
                 android:gravity="center">
 
@@ -57,16 +56,15 @@
                     android:textSize="20sp"
                     android:maxLines="1"/>
 
-            </com.gc.materialdesign.views.ButtonRectangle>
+            </com.gc.materialdesign.views.ButtonFlat>
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/logout_button_in_drawer_main"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@color/gray_900"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:layout_margin="2dp"
+                android:layout_gravity="right"
                 android:gravity="center"
                 android:visibility="gone">
 
@@ -78,16 +76,15 @@
                     android:textSize="20sp"
                     android:maxLines="1"/>
 
-            </com.gc.materialdesign.views.ButtonRectangle>
+            </com.gc.materialdesign.views.ButtonFlat>
 
-            <com.gc.materialdesign.views.ButtonRectangle
+            <com.gc.materialdesign.views.ButtonFlat
                 android:id="@+id/account_manage_button_in_drawer_main"
-                android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:background="@color/gray_900"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
                 android:padding="5dp"
                 android:layout_margin="2dp"
+                android:layout_gravity="right"
                 android:gravity="center"
                 android:visibility="gone">
 
@@ -99,19 +96,38 @@
                     android:textSize="20sp"
                     android:maxLines="1"/>
 
-            </com.gc.materialdesign.views.ButtonRectangle>
+            </com.gc.materialdesign.views.ButtonFlat>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/username_in_drawer_main"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/account_manage_buttons_in_drawer_main"
-            android:text="@string/not_login"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:layout_margin="20dp"/>
+            android:layout_above="@id/account_manage_buttons_in_drawer_main"
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/username_in_drawer_main"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/not_login"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:maxLines="1"/>
+
+            <TextView
+                android:id="@+id/email_in_drawer_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/email"
+                android:textColor="@color/gray_500"
+                android:layout_marginTop="5dp"
+                android:textSize="16sp"
+                android:maxLines="1"/>
+
+        </LinearLayout>
 
     </RelativeLayout>
 
