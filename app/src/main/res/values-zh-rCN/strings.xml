@@ -5,7 +5,7 @@
     <string name="not_login">未登录</string>
     <string name="login">登录</string>
     <string name="register">注册</string>
-    <string name="logout">登出</string>
+    <string name="logout">注销</string>
     <string name="no_network">无网络连接</string>
     <string name="account_manage">账户管理</string>
     <string name="email">电子邮件</string>
@@ -17,4 +17,9 @@
     <string name="random_article">随机页面</string>
     <string name="help">帮助</string>
     <string name="interaction">导航</string>
+    <string name="search">搜索</string>
+    <string name="view_source">查看源代码</string>
+    <string name="view_history">查看历史</string>
+    <string name="move">移动</string>
+    <string name="delete">删除</string>
 </resources>

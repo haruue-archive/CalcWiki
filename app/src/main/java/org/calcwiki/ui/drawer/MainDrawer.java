@@ -11,11 +11,13 @@ import android.widget.TextView;
 import com.gc.materialdesign.views.ButtonFlat;
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
+import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.ui.adapter.MainDrawerMenuAdapter;
 import org.calcwiki.ui.item.MainDrawerMenuItem;
+import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
 import org.calcwiki.util.Utils;
 
 import rx.functions.Action1;
@@ -53,11 +55,21 @@ public class MainDrawer {
     }
 
     private void init() {
-        // Try to get name, if not exist, use IP instead, if not available, use "not login" instead
         usernameView = (TextView) drawerLayout.findViewById(R.id.username_in_drawer_main);
         emailView = (TextView) drawerLayout.findViewById(R.id.email_in_drawer_main);
         // Check has login to make header view
         checkLogin();
+        // set network auto refresh
+        NetworkConnectivityReceiver.addNetworkStateChangeListener(new NetworkConnectivityReceiver.OnNetworkStateChangeListener() {
+            @Override
+            public void onNetworkStateChange(boolean hasNetwork) {
+                if (hasNetwork && !CurrentUser.getInstance().isLogin) {
+                    checkLogin();
+                } else if (!hasNetwork && !CurrentUser.getInstance().isLogin) {
+                    onNoNetWork();
+                }
+            }
+        });
         // Initialize Menu List
         this.menuList = (EasyRecyclerView) drawerLayout.findViewById(R.id.menu_list_in_drawer_main);
         menuList.setLayoutManager(new LinearLayoutManager(drawerLayout.getContext()));
@@ -65,7 +77,7 @@ public class MainDrawer {
         menuAdapter.setOnItemClickListener(new OnMenuItemClickListener());
         menuList.setAdapter(menuAdapter);
         menuAdapter.add(new MainDrawerMenuItem(R.drawable.ic_home_gray_800_24dp, R.string.main_page));
-        menuAdapter.add(new MainDrawerMenuItem(R.drawable.ic_restore_gray_800_24dp, R.string.recent_changes));
+        menuAdapter.add(new MainDrawerMenuItem(R.drawable.ic_schedule_gray_800_24dp, R.string.recent_changes));
         menuAdapter.add(new MainDrawerMenuItem(R.drawable.ic_photo_filter_gray_800_24dp, R.string.random_article));
         menuAdapter.add(new MainDrawerMenuItem(R.drawable.ic_help_outline_gray_800_24dp, R.string.help));
         menuAdapter.notifyDataSetChanged();
@@ -75,10 +87,6 @@ public class MainDrawer {
         this.toggle = new ActionBarDrawerToggle(activity, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-    }
-
-    public void refreshUser() {
-        usernameView.setText(CurrentUser.getInstance().name);
     }
 
     public void setAccountManageButtonMode(int mode) {
@@ -134,6 +142,7 @@ public class MainDrawer {
                 if (s.equals("")) {
                     onNoNetWork();
                 } else {
+                    setAccountManageButtonMode(AccountManageButtonMode.NO_LOGIN);
                     usernameView.setText(s);
                     emailView.setText(R.string.not_login);
                 }
@@ -146,8 +155,9 @@ public class MainDrawer {
      */
     public void onHasLogin() {
         if (CurrentUser.getInstance().isLogin && !CurrentUser.getInstance().name.equals("") && !CurrentUser.getInstance().email.equals("")) {
-                usernameView.setText(CurrentUser.getInstance().name);
-                usernameView.setText(CurrentUser.getInstance().email);
+            setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
+            usernameView.setText(CurrentUser.getInstance().name);
+            emailView.setText(CurrentUser.getInstance().email);
         } else {
             onNoLogin();
         }
@@ -163,6 +173,34 @@ public class MainDrawer {
         public void onItemClick(int position) {
 
         }
+    }
+
+    /**
+     * Drawer 活动时关闭输入法以防止 layout 显示异常
+     * @param activity 调用的 Activity
+     */
+    public void setCloseIMEOnDrawerStateChange(final Activity activity) {
+        drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                JUtils.closeInputMethod(activity);
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                JUtils.closeInputMethod(activity);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                JUtils.closeInputMethod(activity);
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                JUtils.closeInputMethod(activity);
+            }
+        });
     }
 
 }

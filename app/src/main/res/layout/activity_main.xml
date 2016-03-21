@@ -6,11 +6,8 @@
     android:layout_height="match_parent"
     tools:context="org.calcwiki.ui.activity.MainActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:background="?attr/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"/>
+    <include android:id="@+id/toolbar"
+        layout="@layout/toolbar_with_search"/>
 
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_main_in_main"

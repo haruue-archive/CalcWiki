@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Configuration;
+import com.jude.utils.JUtils;
 
 import org.calcwiki.util.Utils;
 
@@ -16,5 +17,6 @@ public class App extends Application {
         ActiveAndroid.initialize(dbConfiguration);
         // Initialize Utils
         Utils.init(this);
+        JUtils.initialize(this);
     }
 }
