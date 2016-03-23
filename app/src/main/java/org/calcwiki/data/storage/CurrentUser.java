@@ -3,6 +3,7 @@ package org.calcwiki.data.storage;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 
 import org.calcwiki.R;
 import org.calcwiki.util.Utils;
