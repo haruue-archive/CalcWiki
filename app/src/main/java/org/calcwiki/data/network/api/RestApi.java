@@ -16,11 +16,19 @@ public class RestApi {
 
     public static void init() {
 
-        OkHttpClient client = new OkHttpClient.Builder().cookieJar(new PersistentCookieJar()).build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .cookieJar(new PersistentCookieJar())
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .addInterceptor(MediaWikiInterceptor.getInstance())
+                .build();
 
         Retrofit retrofitBuilderForCalcWikiApi = new Retrofit.Builder()
                 .baseUrl("https://calcwiki.org/")
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .client(client)
                 .build();
+
+        calcWikiApiService = retrofitBuilderForCalcWikiApi.create(ApiService.class);
     }
 }
