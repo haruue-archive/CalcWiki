@@ -9,4 +9,11 @@
     <color name="gray_800">#424242</color>
     <color name="gray_900">#212121</color>
     <color name="black">#000000</color>
+    <color name="yellow_tip_border">#FDE29B</color>
+    <color name="yellow_tip_background">#FDF1D1</color>
+    <color name="yellow_tip_text">#705000</color>
+    <color name="red_500">#E51C23</color>
+    <color name="green_mediawiki_login_button">#008C6D</color>
+    <color name="blue_mediawiki_join_button">#2962CC</color>
+    <color name="blue_links">#0645AD</color>
 </resources>

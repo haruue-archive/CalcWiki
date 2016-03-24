@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="org.calcwiki.ui.activity.LoginActivity">
+
+    <include android:id="@+id/toolbar"
+             layout="@layout/toolbar_empty"/>
+
+    <TextView
+        android:id="@+id/tip_above_login_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_margin="12dp"
+        android:text="@string/tip_login"
+        android:background="@drawable/tip_rect"
+        android:padding="10dp"
+        android:textColor="@color/yellow_tip_text"
+        android:textSize="15sp"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/edittext_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tip_above_login_activity"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:hint="@string/username"
+        app:met_baseColor="@color/gray_900"
+        app:met_primaryColor="@color/gray_900"
+        app:met_underlineColor="@color/gray_900"
+        android:textColorHighlight="@color/gray_900"
+        app:met_floatingLabelTextColor="@color/gray_900"
+        app:met_errorColor="@color/red_500"
+        app:met_floatingLabel="highlight"
+        android:singleLine="true"
+        android:inputType="text|textNoSuggestions"/>
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/edittext_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edittext_username"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:hint="@string/password"
+        app:met_baseColor="@color/gray_900"
+        app:met_primaryColor="@color/gray_900"
+        app:met_underlineColor="@color/gray_900"
+        android:textColorHighlight="@color/gray_900"
+        app:met_floatingLabelTextColor="@color/gray_900"
+        app:met_errorColor="@color/red_500"
+        app:met_floatingLabel="highlight"
+        android:singleLine="true"
+        android:inputType="textPassword"/>
+
+    <CheckBox
+        android:id="@+id/checkbox_remember_me"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edittext_password"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:text="@string/remember_me"
+        android:textSize="17sp"
+        android:textColor="@color/gray_900"/>
+
+    <com.gc.materialdesign.views.ButtonRectangle
+        android:id="@+id/button_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/checkbox_remember_me"
+        android:background="@color/green_mediawiki_login_button"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold"/>
+
+    </com.gc.materialdesign.views.ButtonRectangle>
+
+    <TextView
+        android:id="@+id/button_forget_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/button_login"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="12sp"
+        android:layout_marginRight="12sp"
+        android:gravity="center"
+        android:text="@string/forget_password"
+        android:textColor="@color/blue_links"
+        android:textSize="17sp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/tip_no_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="12sp"
+            android:layout_marginRight="12sp"
+            android:gravity="center"
+            android:text="@string/have_no_account"
+            android:textColor="@color/gray_900"
+            android:textSize="17sp"/>
+
+
+        <com.gc.materialdesign.views.ButtonRectangle
+            android:id="@+id/button_register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tip_no_account"
+            android:background="@color/blue_mediawiki_join_button"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/join_calcwiki"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
+
+        </com.gc.materialdesign.views.ButtonRectangle>
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

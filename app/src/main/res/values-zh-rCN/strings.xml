@@ -22,4 +22,10 @@
     <string name="view_history">查看历史</string>
     <string name="move">移动</string>
     <string name="delete">删除</string>
+    <string name="tip_login">欢迎来到计算器百科，请输入您的用户名和密码，然后点击[登录]按钮</string>
+    <string name="remember_me">记住我的登录状态</string>
+    <string name="forget_password">忘记密码 ？</string>
+    <string name="create_account">创建账户</string>
+    <string name="have_no_account">没有账户 ？</string>
+    <string name="join_calcwiki">加入计算器百科</string>
 </resources>

@@ -7,6 +7,7 @@ import com.activeandroid.Configuration;
 import com.jude.utils.JFileManager;
 import com.jude.utils.JUtils;
 
+import org.calcwiki.data.network.api.RestApi;
 import org.calcwiki.util.Utils;
 
 public class App extends Application {
@@ -25,5 +26,8 @@ public class App extends Application {
         Utils.init(this);
         JUtils.initialize(this);
         JFileManager.getInstance().init(this, ObjectStorageDirs.values());
+        // Initialize API
+        RestApi.init();
+
     }
 }

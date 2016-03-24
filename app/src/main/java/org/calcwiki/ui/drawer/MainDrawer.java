@@ -1,6 +1,7 @@
 package org.calcwiki.ui.drawer;
 
 import android.app.Activity;
+import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
+import org.calcwiki.ui.activity.LoginActivity;
 import org.calcwiki.ui.adapter.MainDrawerMenuAdapter;
 import org.calcwiki.ui.item.MainDrawerMenuItem;
 import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
@@ -94,6 +96,12 @@ public class MainDrawer {
         ButtonFlat registerButton = (ButtonFlat) drawerLayout.findViewById(R.id.register_button_in_drawer_main);
         ButtonFlat logoutButton = (ButtonFlat) drawerLayout.findViewById(R.id.logout_button_in_drawer_main);
         ButtonFlat accountManageButton = (ButtonFlat) drawerLayout.findViewById(R.id.account_manage_button_in_drawer_main);
+        // Add Listener
+        loginButton.setOnClickListener(new AccountManageButtonListener());
+        registerButton.setOnClickListener(new AccountManageButtonListener());
+        logoutButton.setOnClickListener(new AccountManageButtonListener());
+        accountManageButton.setOnClickListener(new AccountManageButtonListener());
+        // Set mode
         switch (mode) {
             case AccountManageButtonMode.HAS_LOGIN:
                 loginButton.setVisibility(View.GONE);
@@ -120,6 +128,24 @@ public class MainDrawer {
         final static int HAS_LOGIN = 1;
         final static int NO_LOGIN = 2;
         final static int NO_NETWORK = 3;
+    }
+
+    class AccountManageButtonListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.login_button_in_drawer_main:
+                    LoginActivity.startAction(drawerLayout.getContext(), null);
+                    break;
+                case R.id.logout_button_in_drawer_main:
+                    break;
+                case R.id.account_manage_button_in_drawer_main:
+                    break;
+                case R.id.register_button_in_drawer_main:
+                    break;
+            }
+        }
     }
 
     /**
@@ -183,22 +209,24 @@ public class MainDrawer {
         drawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                JUtils.closeInputMethod(activity);
+
             }
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                JUtils.closeInputMethod(activity);
+
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                JUtils.closeInputMethod(activity);
+
             }
 
             @Override
             public void onDrawerStateChanged(int newState) {
-                JUtils.closeInputMethod(activity);
+                if (newState == DrawerLayout.STATE_SETTLING) {
+                    JUtils.closeInputMethod(activity);
+                }
             }
         });
     }

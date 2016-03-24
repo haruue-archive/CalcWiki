@@ -2,6 +2,7 @@ package org.calcwiki.ui.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -31,22 +32,25 @@ public class MainActivity extends AppCompatActivity {
     MainDrawer mainDrawer;
     EditText searchEditText;
     InputMethodManager inputMethodManager;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Init JUtils
+        //Initialize JUtils
         JUtils.setDebug(BuildConfig.DEBUG, this.getClass().getName());
         initializeToolbarAndDrawer(R.id.toolbar, R.id.drawer_main_in_main);
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        // Initialize Handler
+        handler = new Handler(getMainLooper());
     }
 
     protected void initializeToolbarAndDrawer(@IdRes int toolbarId, @IdRes int drawerId) {
         toolbar = (Toolbar) findViewById(toolbarId);
         drawerLayout = (DrawerLayout) findViewById(drawerId);
         mainDrawer = MainDrawer.getInstance(drawerLayout);
-        toolbar.setTitle(R.string.app_name);
+        toolbar.setTitle(R.string.calcwiki);
         setSupportActionBar(toolbar);
         materialMenu = new MaterialMenuDrawable(this, Color.BLACK, MaterialMenuDrawable.Stroke.THIN);
         getSupportActionBar().setHomeAsUpIndicator(materialMenu);

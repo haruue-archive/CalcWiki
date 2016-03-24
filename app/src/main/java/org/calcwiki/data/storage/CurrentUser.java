@@ -6,16 +6,20 @@ import android.content.SharedPreferences;
 import android.os.Build;
 
 import org.calcwiki.R;
+import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.util.Utils;
 
 import java.io.Serializable;
 
 import rx.functions.Action1;
 
-public class CurrentUser {
+/**
+ * 登陆后的用户信息存储
+ * @author Haruue Icymoon haruue@caoyue.com.cn
+ */
+public class CurrentUser implements Serializable {
 
     private static CurrentUser currentUser;
-    private SharedPreferences sharedPreferences;
     public String name;
     public String email;
     public boolean isLogin;
@@ -29,7 +33,7 @@ public class CurrentUser {
     }
 
     private void init() {
-        sharedPreferences = Utils.getApplication().getSharedPreferences("CurrentUser", Activity.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = Utils.getApplication().getSharedPreferences("CurrentUser", Activity.MODE_PRIVATE);
         // Try to get name, if not exist, use IP instead, if not available, use "not login" instead
         name = sharedPreferences.getString("username", "");
         email = sharedPreferences.getString("email", "");
@@ -48,5 +52,9 @@ public class CurrentUser {
         } else {
             isLogin = true;
         }
+    }
+
+    public void onLoginSuccess(LoginModel.Success userInfo) {
+        // TODO: implements this method
     }
 }
