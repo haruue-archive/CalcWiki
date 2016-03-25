@@ -129,6 +129,14 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (MainDrawer.getInstance() != null) {
+            MainDrawer.getInstance().checkLogin();
+        }
+    }
+
     public void doSearch() {
         JUtils.closeInputMethod(this);
         // Check empty and satisfy someone who enjoy the appearing and disappearing of the search view

@@ -1,7 +1,6 @@
 package org.calcwiki.ui.drawer;
 
 import android.app.Activity;
-import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -180,7 +179,7 @@ public class MainDrawer {
      * 如果认为用户已经登录了，并且数据已经加载到了 CurrentUser ，请调用此函数
      */
     public void onHasLogin() {
-        if (CurrentUser.getInstance().isLogin && !CurrentUser.getInstance().name.equals("") && !CurrentUser.getInstance().email.equals("")) {
+        if (CurrentUser.getInstance().isLogin && !CurrentUser.getInstance().name.equals("")/* && !CurrentUser.getInstance().email.equals("")*/) {
             setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
             usernameView.setText(CurrentUser.getInstance().name);
             emailView.setText(CurrentUser.getInstance().email);

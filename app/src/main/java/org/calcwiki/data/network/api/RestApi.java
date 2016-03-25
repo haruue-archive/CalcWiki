@@ -1,5 +1,6 @@
 package org.calcwiki.data.network.api;
 
+import org.calcwiki.data.network.converter.StringConverterFactory;
 import org.calcwiki.data.network.cookie.PersistentCookieJar;
 
 import okhttp3.OkHttpClient;
@@ -25,6 +26,7 @@ public class RestApi {
 
         Retrofit retrofitBuilderForCalcWikiApi = new Retrofit.Builder()
                 .baseUrl("https://calcwiki.org/")
+                .addConverterFactory(StringConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .client(client)
                 .build();

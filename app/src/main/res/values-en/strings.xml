@@ -28,4 +28,11 @@
     <string name="create_account">Create Account</string>
     <string name="have_no_account">Don\'t have a account ?</string>
     <string name="join_calcwiki">Join CalcWiki Now</string>
+    <string name="login_success">Login Success</string>
+    <string name="login_failure">Login Failure</string>
+    <string name="username_can_not_be_empty">Username can\'t be empty</string>
+    <string name="password_can_not_be_empty">Password can\'t be empty</string>
+    <string name="username_not_exist">Username isn\'t exist</string>
+    <string name="password_error">Incorrect Password</string>
+    <string name="unexpected_error_please_try_again">Unexpected error, please try again</string>
 </resources>

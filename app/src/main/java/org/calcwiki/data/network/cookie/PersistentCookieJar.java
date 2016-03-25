@@ -4,6 +4,7 @@ import com.jude.utils.JFileManager;
 
 import org.calcwiki.App;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,34 +32,39 @@ public class PersistentCookieJar implements CookieJar {
     }
 
     private ArrayList<Cookie> getCookiesOfUrl(HttpUrl url) {
-        ArrayList<Cookie> cookies;
+        ArrayList<String> stringCookies;
+        ArrayList<Cookie> cookies = new ArrayList<Cookie>(0);
         try {
-            cookies = (ArrayList<Cookie>) folder.readObjectFromFile(getFilenameOfUrl(url));
-            if (cookies != null) {
-                for (Cookie i: cookies) {
-                    if (i.expiresAt() < System.currentTimeMillis()) {
-                        cookies.remove(i);
+            stringCookies = (ArrayList<String>) folder.readObjectFromFile(getFilenameOfUrl(url));
+            if (stringCookies != null) {
+                for (String i: stringCookies) {
+                    Cookie thisCookie = Cookie.parse(url, i);
+                    if (thisCookie.expiresAt() > System.currentTimeMillis()) {
+                        cookies.add(thisCookie);
                     }
                 }
-                return cookies;
             } else {
-                return new ArrayList<Cookie>(0);
+                cookies = new ArrayList<Cookie>(0);
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<Cookie>(0);
+            cookies = new ArrayList<Cookie>(0);
         }
+        return cookies;
     }
 
-    private void commitCookiesOfUrl(HttpUrl url, List<Cookie> cookies) {
-        folder.writeObjectToFile(cookies, getFilenameOfUrl(url));
+    private void commitCookiesOfUrl(HttpUrl url, List<String> stringCookies) {
+        folder.writeObjectToFile(stringCookies, getFilenameOfUrl(url));
     }
 
 
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
         initCookieFolder();
-        commitCookiesOfUrl(url, cookies);
+        ArrayList<String> stringCookies = new ArrayList<String>(0);
+        for (Cookie i: cookies) {
+            stringCookies.add(i.toString());
+        }
+        commitCookiesOfUrl(url, stringCookies);
     }
 
     @Override

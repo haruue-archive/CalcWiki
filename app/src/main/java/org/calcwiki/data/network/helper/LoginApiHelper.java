@@ -1,6 +1,7 @@
 package org.calcwiki.data.network.helper;
 
 import com.alibaba.fastjson.JSON;
+import com.jude.utils.JUtils;
 
 import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.data.network.api.RestApi;
@@ -10,6 +11,7 @@ import org.calcwiki.data.storage.CurrentUser;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -18,61 +20,86 @@ import rx.schedulers.Schedulers;
  */
 public class LoginApiHelper {
 
-    interface LoginApiHelperListener {
-        void onSuccess();
-        void onFailure(int reason);
+    public interface LoginApiHelperListener {
+        void onLoginSuccess();
+        void onLoginFailure(int reason);
     }
 
-    class LoginFailureReason {
-        final static int EMPTY_USERNAME = 1;
-        final static int EMPTY_PASSWORD = 2;
-        final static int USERNAME_NOT_EXIST = 4;
-        final static int PASSWORD_ERROR = 8;
-        final static int NETWORK_ERROR = 16;
-        final static int SERVER_ERROR = 32;
-        final static int TOKEN_WRONG = 64;
+    public class LoginFailureReason {
+        public final static int EMPTY_USERNAME = 1;
+        public final static int EMPTY_PASSWORD = 2;
+        public final static int USERNAME_NOT_EXIST = 4;
+        public final static int PASSWORD_ERROR = 8;
+        public final static int NETWORK_ERROR = 16;
+        public final static int SERVER_ERROR = 32;
+        public final static int TOKEN_WRONG = 64;
 
     }
 
     public static void login(final LoginApiHelperListener listener) {
         if (CurrentLogin.getInstance().username == null || CurrentLogin.getInstance().username.isEmpty()) {
-            listener.onFailure(LoginFailureReason.EMPTY_USERNAME);
+            listener.onLoginFailure(LoginFailureReason.EMPTY_USERNAME);
             return;
         }
         if (CurrentLogin.getInstance().password == null || CurrentLogin.getInstance().password.isEmpty()) {
-            listener.onFailure(LoginFailureReason.EMPTY_PASSWORD);
+            listener.onLoginFailure(LoginFailureReason.EMPTY_PASSWORD);
             return;
         }
-        Observable<String> loginObservable = RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, "");
+        final Observable<String> loginObservable = RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, "");
         loginObservable.subscribeOn(Schedulers.io())
-                .doOnNext(new Action1<String>() {
+                .flatMap(new Func1<String, Observable<? extends String>>() {
+                    @Override
+                    public Observable<? extends String> call(String s) {
+                        // Need Token
+                        CurrentLogin.getInstance().lgtoken = JSON.parseObject(s, LoginModel.NeedToken.class).login.token;
+                        if (CurrentLogin.getInstance().lgtoken != null) {
+                            return RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, CurrentLogin.getInstance().lgtoken);
+                        }
+                        // Success on the first time
+                        LoginModel.Success success = JSON.parseObject(s, LoginModel.Success.class);
+                        if (success != null && success.login != null && success.login.lgusername != null) {
+                            listener.onLoginSuccess();
+                            return null;
+                        }
+                        // Failure on the first time
+                        LoginModel.Result result = JSON.parseObject(s, LoginModel.Result.class);
+                        if (result.login.result.equals("WrongPass")) {
+                            listener.onLoginFailure(LoginFailureReason.PASSWORD_ERROR);
+                        } else if (result.login.result.equals("NotExists")) {
+                            listener.onLoginFailure(LoginFailureReason.USERNAME_NOT_EXIST);
+                        } else if (result.login.result.equals("WrongToken")) {
+                            listener.onLoginFailure(LoginFailureReason.TOKEN_WRONG);
+                        } else {
+                            listener.onLoginFailure(LoginFailureReason.NETWORK_ERROR);
+                        }
+                        return null;
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        try {
-                            CurrentLogin.getInstance().lgtoken = JSON.parseObject(s, LoginModel.NeedToken.class).login.token;
-                        } catch (Exception e) {
-                            try {
-                                CurrentUser.getInstance().onLoginSuccess(JSON.parseObject(s, LoginModel.Success.class));
-                            } catch (Exception e) {
-                                LoginModel.Result result = JSON.parseObject(s, LoginModel.Result.class);
-                                if (result.login.result.equals("WrongPass")) {
-                                    listener.onFailure(LoginFailureReason.PASSWORD_ERROR);
-                                } else if (result.login.result.equals("NotExists")) {
-                                    listener.onFailure(LoginFailureReason.USERNAME_NOT_EXIST);
-                                } else if (result.login.result.equals("WrongToken")) {
-                                    listener.onFailure(LoginFailureReason.TOKEN_WRONG);
-                                }
-                            }
+                        JUtils.Log(s);
+                        // Success on the second time
+                        LoginModel.Success success = JSON.parseObject(s, LoginModel.Success.class);
+                        if (success != null && success.login != null && success.login.lgusername != null) {
+                            CurrentUser.getInstance().onLoginSuccess(success);
+                            listener.onLoginSuccess();
+                            CurrentLogin.clear();
+                            return;
+                        }
+                        // Failure on the second time
+                        LoginModel.Result result = JSON.parseObject(s, LoginModel.Result.class);
+                        if (result.login.result.equals("WrongPass")) {
+                            listener.onLoginFailure(LoginFailureReason.PASSWORD_ERROR);
+                        } else if (result.login.result.equals("NotExists")) {
+                            listener.onLoginFailure(LoginFailureReason.USERNAME_NOT_EXIST);
+                        } else if (result.login.result.equals("WrongToken")) {
+                            listener.onLoginFailure(LoginFailureReason.TOKEN_WRONG);
+                        } else {
+                            listener.onLoginFailure(LoginFailureReason.NETWORK_ERROR);
                         }
                     }
-                })
-                .doOnNext(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-
-                    }
-                })
-                // TODO: Complete it
-
+                });
     }
 }

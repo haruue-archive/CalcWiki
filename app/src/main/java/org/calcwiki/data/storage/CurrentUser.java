@@ -22,6 +22,8 @@ public class CurrentUser implements Serializable {
     private static CurrentUser currentUser;
     public String name;
     public String email;
+    public int userId;
+    public String lgtoken;
     public boolean isLogin;
 
     public static CurrentUser getInstance() {
@@ -55,6 +57,10 @@ public class CurrentUser implements Serializable {
     }
 
     public void onLoginSuccess(LoginModel.Success userInfo) {
+        name = userInfo.login.lgusername;
+        userId = userInfo.login.lguserid;
+        lgtoken = userInfo.login.lgtoken;
+        isLogin = true;
         // TODO: implements this method
     }
 }
