@@ -7,6 +7,8 @@ import android.os.Build;
 
 import org.calcwiki.R;
 import org.calcwiki.data.model.LoginModel;
+import org.calcwiki.data.model.QueryModel;
+import org.calcwiki.ui.drawer.MainDrawer;
 import org.calcwiki.util.Utils;
 
 import java.io.Serializable;
@@ -39,6 +41,8 @@ public class CurrentUser implements Serializable {
         // Try to get name, if not exist, use IP instead, if not available, use "not login" instead
         name = sharedPreferences.getString("username", "");
         email = sharedPreferences.getString("email", "");
+        userId = sharedPreferences.getInt("userId", -1);
+        lgtoken = sharedPreferences.getString("lgtoken", "");
         if (name.equals("")) {
             Utils.getIP(new Action1<String>() {
                 @Override
@@ -56,11 +60,31 @@ public class CurrentUser implements Serializable {
         }
     }
 
+    public void saveBaseInfoToSharedPreferences() {
+        SharedPreferences.Editor editor = Utils.getApplication().getSharedPreferences("CurrentUser", Activity.MODE_PRIVATE).edit();
+        editor.putString("username", name);
+        editor.putInt("userId", userId);
+        editor.putString("email", email);
+        editor.putString("lgtoken", lgtoken);
+    }
+
     public void onLoginSuccess(LoginModel.Success userInfo) {
         name = userInfo.login.lgusername;
         userId = userInfo.login.lguserid;
         lgtoken = userInfo.login.lgtoken;
         isLogin = true;
-        // TODO: implements this method
+        if (MainDrawer.getInstance() != null) {
+            MainDrawer.getInstance().checkLogin();
+        }
+    }
+
+    public void setBaseUserInfo(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo) {
+        name = userInfo.name;
+        userId = userInfo.id;
+        email = userInfo.email;
+        if (MainDrawer.getInstance() != null) {
+            MainDrawer.getInstance().checkLogin();
+        }
+        saveBaseInfoToSharedPreferences();
     }
 }

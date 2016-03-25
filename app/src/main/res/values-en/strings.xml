@@ -35,4 +35,5 @@
     <string name="username_not_exist">Username isn\'t exist</string>
     <string name="password_error">Incorrect Password</string>
     <string name="unexpected_error_please_try_again">Unexpected error, please try again</string>
+    <string name="logining">Logining</string>
 </resources>

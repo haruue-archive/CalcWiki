@@ -2,6 +2,7 @@ package org.calcwiki.util;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
 import android.util.Log;
 
 import com.jude.utils.JUtils;
@@ -21,6 +22,7 @@ import rx.schedulers.Schedulers;
 public class Utils {
 
     static Context context;
+    static Handler handler;
 
     /**
      * 在 App 类中初始化工具
@@ -28,6 +30,7 @@ public class Utils {
      */
     public static void init(Context context) {
         Utils.context = context;
+        handler = new Handler(context.getMainLooper());
     }
 
     /**
@@ -79,6 +82,14 @@ public class Utils {
      */
     public static Context getApplication() {
         return context;
+    }
+
+    public static void runOnUIThread(Runnable runnable) {
+        handler.post(runnable);
+    }
+
+    public static void runOnNewThread(Runnable runnable) {
+        new Thread(runnable).start();
     }
 
 }

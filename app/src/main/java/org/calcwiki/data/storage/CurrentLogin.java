@@ -12,7 +12,6 @@ public class CurrentLogin implements Serializable {
 
     public String username;
     public String password;
-    public boolean isRememberMe;
     public String lgtoken;
 
     private CurrentLogin() {

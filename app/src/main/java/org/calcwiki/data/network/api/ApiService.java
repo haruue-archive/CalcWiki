@@ -11,4 +11,7 @@ public interface ApiService {
     @FormUrlEncoded
     Observable<String> login(@Field("lgname") String lgname, @Field("lgpassword") String lgpassword, @Field("lgtoken") String lgtoken);
 
+    @POST("https://calcwiki.org/api.php?action=query&meta=userinfo")
+    @FormUrlEncoded
+    Observable<String> getCurrentUserInfo(@Field("uiprop") String uiprop);
 }

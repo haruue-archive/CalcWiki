@@ -35,4 +35,5 @@
     <string name="username_not_exist">帳戶名不存在</string>
     <string name="password_error">密碼不正確</string>
     <string name="unexpected_error_please_try_again">發生未知錯誤，請再次嘗試</string>
+    <string name="logining">正在登入</string>
 </resources>

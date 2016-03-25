@@ -1,5 +1,6 @@
 package org.calcwiki.ui.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,9 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.calcwiki.BuildConfig;
 import org.calcwiki.R;
+import org.calcwiki.data.network.api.ApiService;
 import org.calcwiki.data.network.helper.LoginApiHelper;
+import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentLogin;
 import org.calcwiki.ui.drawer.MainDrawer;
 
@@ -27,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     Toolbar toolbar;
     MaterialEditText usernameEditText;
     MaterialEditText passwordEditText;
-    CheckBox rememberMeCheckbox;
     ButtonRectangle loginButton;
     TextView forgetPasswordButton;
     ButtonRectangle registerButton;
@@ -56,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Widgets
         usernameEditText = (MaterialEditText) findViewById(R.id.edittext_username);
         passwordEditText = (MaterialEditText) findViewById(R.id.edittext_password);
-        rememberMeCheckbox = (CheckBox) findViewById(R.id.checkbox_remember_me);
         loginButton = (ButtonRectangle) findViewById(R.id.button_login);
         forgetPasswordButton = (TextView) findViewById(R.id.button_forget_password);
         registerButton = (ButtonRectangle) findViewById(R.id.button_register);
@@ -66,16 +67,20 @@ public class LoginActivity extends AppCompatActivity {
         forgetPasswordButton.setOnClickListener(new Listener());
     }
 
-    private class Listener implements View.OnClickListener, LoginApiHelper.LoginApiHelperListener {
+    private class Listener implements View.OnClickListener, LoginApiHelper.LoginApiHelperListener, QueryApiHelper.OnGetBaseUserInfoListener {
+
+        ProgressDialog progressDialog;
 
         @Override
         public void onLoginSuccess() {
-            JUtils.Toast(getResources().getString(R.string.login_success));
-            finish();
+            QueryApiHelper.getBaseUserInfo(this);
         }
 
         @Override
         public void onLoginFailure(int reason) {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
             switch (reason) {
                 case LoginApiHelper.LoginFailureReason.EMPTY_USERNAME:
                     usernameEditText.setError(getResources().getString(R.string.username_can_not_be_empty));
@@ -104,6 +109,9 @@ public class LoginActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.button_login:
+                    progressDialog = new ProgressDialog(LoginActivity.this);
+                    progressDialog.setMessage(getResources().getString(R.string.logining));
+                    progressDialog.show();
                     refreshCurrentLogin();
                     LoginApiHelper.login(this);
                     break;
@@ -114,6 +122,15 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         }
+
+        @Override
+        public void onGetBaseUserInfo() {
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+            finish();
+            JUtils.Toast(getResources().getString(R.string.login_success));
+        }
     }
 
     /**
@@ -122,7 +139,6 @@ public class LoginActivity extends AppCompatActivity {
     public void refreshCurrentLogin() {
         CurrentLogin.getInstance().username = usernameEditText.getText().toString();
         CurrentLogin.getInstance().password = passwordEditText.getText().toString();
-        CurrentLogin.getInstance().isRememberMe = rememberMeCheckbox.isChecked();
     }
 
     public static void startAction(Context context, String defaultUsername) {

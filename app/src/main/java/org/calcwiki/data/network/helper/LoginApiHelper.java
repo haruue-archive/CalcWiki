@@ -7,6 +7,7 @@ import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.data.network.api.RestApi;
 import org.calcwiki.data.storage.CurrentLogin;
 import org.calcwiki.data.storage.CurrentUser;
+import org.calcwiki.util.Utils;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -45,8 +46,8 @@ public class LoginApiHelper {
             listener.onLoginFailure(LoginFailureReason.EMPTY_PASSWORD);
             return;
         }
-        final Observable<String> loginObservable = RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, "");
-        loginObservable.subscribeOn(Schedulers.io())
+        RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, "")
+                .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<String, Observable<? extends String>>() {
                     @Override
                     public Observable<? extends String> call(String s) {
@@ -54,25 +55,9 @@ public class LoginApiHelper {
                         CurrentLogin.getInstance().lgtoken = JSON.parseObject(s, LoginModel.NeedToken.class).login.token;
                         if (CurrentLogin.getInstance().lgtoken != null) {
                             return RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, CurrentLogin.getInstance().lgtoken);
-                        }
-                        // Success on the first time
-                        LoginModel.Success success = JSON.parseObject(s, LoginModel.Success.class);
-                        if (success != null && success.login != null && success.login.lgusername != null) {
-                            listener.onLoginSuccess();
-                            return null;
-                        }
-                        // Failure on the first time
-                        LoginModel.Result result = JSON.parseObject(s, LoginModel.Result.class);
-                        if (result.login.result.equals("WrongPass")) {
-                            listener.onLoginFailure(LoginFailureReason.PASSWORD_ERROR);
-                        } else if (result.login.result.equals("NotExists")) {
-                            listener.onLoginFailure(LoginFailureReason.USERNAME_NOT_EXIST);
-                        } else if (result.login.result.equals("WrongToken")) {
-                            listener.onLoginFailure(LoginFailureReason.TOKEN_WRONG);
                         } else {
-                            listener.onLoginFailure(LoginFailureReason.NETWORK_ERROR);
+                            return Observable.just(s);
                         }
-                        return null;
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -82,7 +67,7 @@ public class LoginApiHelper {
                         JUtils.Log(s);
                         // Success on the second time
                         LoginModel.Success success = JSON.parseObject(s, LoginModel.Success.class);
-                        if (success != null && success.login != null && success.login.lgusername != null) {
+                        if (success != null && success.login.result.equals("Success") && success.login != null && success.login.lgusername != null) {
                             CurrentUser.getInstance().onLoginSuccess(success);
                             listener.onLoginSuccess();
                             CurrentLogin.clear();
