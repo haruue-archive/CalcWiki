@@ -28,7 +28,8 @@ public class DialogLogout {
                 .setTitle(R.string.are_you_sure_logout)
                 .setMessage(R.string.no_person_data_will_be_persist_on_this_device)
                 .setPositiveButton(R.string.yes, new Listener())
-                .setNegativeButton(R.string.cancel, new Listener());
+                .setNegativeButton(R.string.cancel, new Listener())
+                .setCanceledOnTouchOutside(true);
     }
 
     public void show() {

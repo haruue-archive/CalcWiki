@@ -15,6 +15,7 @@ import rx.schedulers.Schedulers;
 
 /**
  * 协助操纵 action=query 的工具
+ * 不包括 action=query&meta=tokens 请参考 {@link TokenApiHelper}
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class QueryApiHelper {

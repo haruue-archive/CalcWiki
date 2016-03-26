@@ -17,4 +17,8 @@ public interface ApiService {
 
     @POST("https://calcwiki.org/api.php?action=logout")
     Observable<String> logout();
+
+    @POST("https://calcwiki.org/api.php?action=query&meta=tokens")
+    @FormUrlEncoded
+    Observable<String> getToken(@Field("type") String type);
 }
