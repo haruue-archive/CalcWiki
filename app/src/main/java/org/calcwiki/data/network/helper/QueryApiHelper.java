@@ -8,6 +8,7 @@ import org.calcwiki.data.storage.CurrentUser;
 import org.json.JSONArray;
 
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -33,9 +34,19 @@ public class QueryApiHelper {
         RestApi.getCalcWikiApiService().getCurrentUserInfo(uiprop)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void call(String s) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
                         CurrentUser.getInstance().setBaseUserInfo(JSON.parseObject(s, QueryModel.UserInfo.class).query.userinfo);
                         listener.onGetBaseUserInfo();
                     }

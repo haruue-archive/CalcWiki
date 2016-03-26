@@ -21,7 +21,9 @@ import org.calcwiki.data.network.api.ApiService;
 import org.calcwiki.data.network.helper.LoginApiHelper;
 import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentLogin;
+import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.ui.drawer.MainDrawer;
+import org.calcwiki.ui.util.CurrentStateStorager;
 
 import java.io.Serializable;
 
@@ -111,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                 case R.id.button_login:
                     progressDialog = new ProgressDialog(LoginActivity.this);
                     progressDialog.setMessage(getResources().getString(R.string.logining));
+                    progressDialog.setCancelable(false);
                     progressDialog.show();
                     refreshCurrentLogin();
                     LoginApiHelper.login(this);
@@ -139,6 +142,26 @@ public class LoginActivity extends AppCompatActivity {
     public void refreshCurrentLogin() {
         CurrentLogin.getInstance().username = usernameEditText.getText().toString();
         CurrentLogin.getInstance().password = passwordEditText.getText().toString();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        CurrentStateStorager.save(outState);
+        outState.putSerializable(CurrentLogin.class.getName(), CurrentLogin.getInstance());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        CurrentStateStorager.restore(savedInstanceState);
+        CurrentLogin.restoreInstance(savedInstanceState.getSerializable(CurrentLogin.class.getName()));
+        if (CurrentLogin.getInstance().username != null) {
+            usernameEditText.setText(CurrentLogin.getInstance().username);
+        }
+        if (CurrentLogin.getInstance().password != null) {
+            passwordEditText.setText(CurrentLogin.getInstance().password);
+        }
     }
 
     public static void startAction(Context context, String defaultUsername) {

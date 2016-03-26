@@ -10,6 +10,7 @@ import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.util.Utils;
 
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -61,9 +62,19 @@ public class LoginApiHelper {
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
+                .subscribe(new Observer<String>() {
                     @Override
-                    public void call(String s) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onLoginFailure(LoginFailureReason.NETWORK_ERROR);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
                         JUtils.Log(s);
                         // Success on the second time
                         LoginModel.Success success = JSON.parseObject(s, LoginModel.Success.class);

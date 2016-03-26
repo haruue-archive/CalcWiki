@@ -8,6 +8,8 @@ import android.os.Build;
 import org.calcwiki.R;
 import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.data.model.QueryModel;
+import org.calcwiki.data.network.cookie.PersistentCookieJar;
+import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
 import org.calcwiki.util.Utils;
 
@@ -27,6 +29,7 @@ public class CurrentUser implements Serializable {
     public int userId;
     public String lgtoken;
     public boolean isLogin;
+    public boolean hasNetWork;
 
     public static CurrentUser getInstance() {
         if (currentUser == null) {
@@ -43,20 +46,27 @@ public class CurrentUser implements Serializable {
         email = sharedPreferences.getString("email", "");
         userId = sharedPreferences.getInt("userId", -1);
         lgtoken = sharedPreferences.getString("lgtoken", "");
-        if (name.equals("")) {
+        if (userId == -1 || name.equals("")) {
+            isLogin = false;
             Utils.getIP(new Action1<String>() {
                 @Override
                 public void call(String s) {
                     if (s.equals("")) {
-                        name = Utils.getApplication().getString(R.string.not_login);
+                        name = Utils.getApplication().getString(R.string.no_network);
+                        email = Utils.getApplication().getString(R.string.please_cleck_network);
+                        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+                        hasNetWork = false;
                     } else {
                         name = s;
+                        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+                        hasNetWork = true;
                     }
                 }
             });
-            isLogin = false;
         } else {
             isLogin = true;
+            hasNetWork = true;
+            CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
         }
     }
 
@@ -66,6 +76,7 @@ public class CurrentUser implements Serializable {
         editor.putInt("userId", userId);
         editor.putString("email", email);
         editor.putString("lgtoken", lgtoken);
+        editor.apply();
     }
 
     public void onLoginSuccess(LoginModel.Success userInfo) {
@@ -73,18 +84,35 @@ public class CurrentUser implements Serializable {
         userId = userInfo.login.lguserid;
         lgtoken = userInfo.login.lgtoken;
         isLogin = true;
-        if (MainDrawer.getInstance() != null) {
-            MainDrawer.getInstance().checkLogin();
-        }
+        hasNetWork = true;
+        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+    }
+
+    public void onLogout() {
+        userId = -1;
+        name = "";
+        email = "";
+        lgtoken = "";
+        isLogin = false;
+        saveBaseInfoToSharedPreferences();
+        init();
+        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
     }
 
     public void setBaseUserInfo(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo) {
         name = userInfo.name;
         userId = userInfo.id;
         email = userInfo.email;
-        if (MainDrawer.getInstance() != null) {
-            MainDrawer.getInstance().checkLogin();
-        }
+        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
         saveBaseInfoToSharedPreferences();
+    }
+
+    public void refreshCurrentUser() {
+        init();
+    }
+
+    public static void restoreInstance(Serializable instance) {
+        currentUser = (CurrentUser) instance;
+        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
     }
 }

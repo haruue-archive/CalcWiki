@@ -14,4 +14,7 @@ public interface ApiService {
     @POST("https://calcwiki.org/api.php?action=query&meta=userinfo")
     @FormUrlEncoded
     Observable<String> getCurrentUserInfo(@Field("uiprop") String uiprop);
+
+    @POST("https://calcwiki.org/api.php?action=logout")
+    Observable<String> logout();
 }

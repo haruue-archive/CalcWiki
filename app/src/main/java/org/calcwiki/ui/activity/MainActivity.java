@@ -22,9 +22,11 @@ import com.jude.utils.JUtils;
 import org.calcwiki.BuildConfig;
 import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
+import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
+import org.calcwiki.ui.util.CurrentStateStorager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CurrentUserChangeCaller.CurrentUserChangeListener {
 
     Toolbar toolbar;
     MaterialMenuDrawable materialMenu;
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        CurrentUserChangeCaller.getInstance().addCurrentUserListener(this);
     }
 
     @Override
@@ -81,6 +84,11 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onCurrentUserChange() {
+        invalidateOptionsMenu();
     }
 
     public class Listener implements Toolbar.OnMenuItemClickListener {
@@ -108,10 +116,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_in_toolbar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
         if (!CurrentUser.getInstance().isLogin) {
-            menu.removeItem(R.id.action_edit);
-            menu.removeItem(R.id.action_move);
-            menu.removeItem(R.id.action_delete);
+            menu.findItem(R.id.action_history).setVisible(true);
+            menu.findItem(R.id.action_view_source).setVisible(true);
+            menu.findItem(R.id.action_search).setVisible(true);
+            menu.findItem(R.id.action_edit).setVisible(false);
+            menu.findItem(R.id.action_delete).setVisible(false);
+            menu.findItem(R.id.action_move).setVisible(false);
+        } else {
+            menu.findItem(R.id.action_history).setVisible(true);
+            menu.findItem(R.id.action_view_source).setVisible(false);
+            menu.findItem(R.id.action_search).setVisible(true);
+            menu.findItem(R.id.action_edit).setVisible(true);
+            menu.findItem(R.id.action_delete).setVisible(true);
+            menu.findItem(R.id.action_move).setVisible(true);
         }
         return true;
     }
@@ -135,6 +158,24 @@ public class MainActivity extends AppCompatActivity {
         if (MainDrawer.getInstance() != null) {
             MainDrawer.getInstance().checkLogin();
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        CurrentStateStorager.save(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        CurrentStateStorager.restore(savedInstanceState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CurrentUserChangeCaller.getInstance().removeCurrentUserListener(this);
     }
 
     public void doSearch() {

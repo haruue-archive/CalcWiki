@@ -36,4 +36,9 @@
     <string name="password_error">Incorrect Password</string>
     <string name="unexpected_error_please_try_again">Unexpected error, please try again</string>
     <string name="logining">Logining</string>
+    <string name="are_you_sure_logout">Sure to logout ?</string>
+    <string name="no_person_data_will_be_persist_on_this_device">No personal account data will be persist on this device</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
+    <string name="logouting">Logouting</string>
 </resources>

@@ -15,13 +15,12 @@ import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
+import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.activity.LoginActivity;
 import org.calcwiki.ui.adapter.MainDrawerMenuAdapter;
+import org.calcwiki.ui.dialog.DialogLogout;
 import org.calcwiki.ui.item.MainDrawerMenuItem;
 import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
-import org.calcwiki.util.Utils;
-
-import rx.functions.Action1;
 
 public class MainDrawer {
 
@@ -60,14 +59,22 @@ public class MainDrawer {
         emailView = (TextView) drawerLayout.findViewById(R.id.email_in_drawer_main);
         // Check has login to make header view
         checkLogin();
-        // set network auto refresh
+        // set auto refresh listener
+        CurrentUserChangeCaller.getInstance().addCurrentUserListener(new CurrentUserChangeCaller.CurrentUserChangeListener() {
+            @Override
+            public void onCurrentUserChange() {
+                checkLogin();
+            }
+        });
+        CurrentUser.getInstance().refreshCurrentUser();
         NetworkConnectivityReceiver.addNetworkStateChangeListener(new NetworkConnectivityReceiver.OnNetworkStateChangeListener() {
             @Override
             public void onNetworkStateChange(boolean hasNetwork) {
+                CurrentUser.getInstance().hasNetWork = hasNetwork;
                 if (hasNetwork && !CurrentUser.getInstance().isLogin) {
-                    checkLogin();
+                    CurrentUser.getInstance().refreshCurrentUser();
                 } else if (!hasNetwork && !CurrentUser.getInstance().isLogin) {
-                    onNoNetWork();
+                    checkLogin();
                 }
             }
         });
@@ -138,6 +145,7 @@ public class MainDrawer {
                     LoginActivity.startAction(drawerLayout.getContext(), null);
                     break;
                 case R.id.logout_button_in_drawer_main:
+                    new DialogLogout(drawerLayout.getContext()).show();
                     break;
                 case R.id.account_manage_button_in_drawer_main:
                     break;
@@ -147,49 +155,16 @@ public class MainDrawer {
         }
     }
 
-    /**
-     * 如果当前没有网络，请调用此函数
-     */
-    public void onNoNetWork() {
-        setAccountManageButtonMode(AccountManageButtonMode.NO_NETWORK);
-        // set special tip in username and email view
-        usernameView.setText(R.string.no_network);
-        emailView.setText(R.string.please_cleck_network);
-    }
-
-    /**
-     * 如果用户没有登录，请调用此函数
-     */
-    public void onNoLogin() {
-        Utils.getIP(new Action1<String>() {
-            @Override
-            public void call(String s) {
-                if (s.equals("")) {
-                    onNoNetWork();
-                } else {
-                    setAccountManageButtonMode(AccountManageButtonMode.NO_LOGIN);
-                    usernameView.setText(s);
-                    emailView.setText(R.string.not_login);
-                }
-            }
-        });
-    }
-
-    /**
-     * 如果认为用户已经登录了，并且数据已经加载到了 CurrentUser ，请调用此函数
-     */
-    public void onHasLogin() {
-        if (CurrentUser.getInstance().isLogin && !CurrentUser.getInstance().name.equals("")/* && !CurrentUser.getInstance().email.equals("")*/) {
-            setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
-            usernameView.setText(CurrentUser.getInstance().name);
-            emailView.setText(CurrentUser.getInstance().email);
-        } else {
-            onNoLogin();
-        }
-    }
-
     public void checkLogin() {
-        onHasLogin();
+        usernameView.setText(CurrentUser.getInstance().name);
+        emailView.setText(CurrentUser.getInstance().email);
+        if (CurrentUser.getInstance().isLogin) {
+            setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
+        } else if (CurrentUser.getInstance().hasNetWork) {
+            setAccountManageButtonMode(AccountManageButtonMode.NO_LOGIN);
+        } else if (!CurrentUser.getInstance().hasNetWork) {
+            setAccountManageButtonMode(AccountManageButtonMode.NO_NETWORK);
+        }
     }
 
     public class OnMenuItemClickListener implements RecyclerArrayAdapter.OnItemClickListener {

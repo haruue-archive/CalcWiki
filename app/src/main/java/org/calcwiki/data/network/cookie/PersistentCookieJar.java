@@ -56,6 +56,10 @@ public class PersistentCookieJar implements CookieJar {
         folder.writeObjectToFile(stringCookies, getFilenameOfUrl(url));
     }
 
+    public void removeCookiesOfUrl(HttpUrl url) {
+        initCookieFolder();
+        folder.deleteChild(getFilenameOfUrl(url));
+    }
 
     @Override
     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
