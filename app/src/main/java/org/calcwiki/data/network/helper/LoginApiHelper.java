@@ -7,12 +7,10 @@ import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.data.network.api.RestApi;
 import org.calcwiki.data.storage.CurrentLogin;
 import org.calcwiki.data.storage.CurrentUser;
-import org.calcwiki.util.Utils;
 
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -35,19 +33,19 @@ public class LoginApiHelper {
         public final static int NETWORK_ERROR = 16;
         public final static int SERVER_ERROR = 32;
         public final static int TOKEN_WRONG = 64;
-
     }
 
     public static void login(final LoginApiHelperListener listener) {
-        if (CurrentLogin.getInstance().username == null || CurrentLogin.getInstance().username.isEmpty()) {
+        final CurrentLogin data = CurrentLogin.getInstance();
+        if (data.username == null || data.username.isEmpty()) {
             listener.onLoginFailure(LoginFailureReason.EMPTY_USERNAME);
             return;
         }
-        if (CurrentLogin.getInstance().password == null || CurrentLogin.getInstance().password.isEmpty()) {
+        if (data.password == null || data.password.isEmpty()) {
             listener.onLoginFailure(LoginFailureReason.EMPTY_PASSWORD);
             return;
         }
-        RestApi.getCalcWikiApiService().login(CurrentLogin.getInstance().username, CurrentLogin.getInstance().password, "")
+        RestApi.getCalcWikiApiService().login(data.username, data.password, "")
                 .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<String, Observable<? extends String>>() {
                     @Override

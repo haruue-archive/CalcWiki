@@ -21,4 +21,9 @@ public interface ApiService {
     @POST("https://calcwiki.org/api.php?action=query&meta=tokens")
     @FormUrlEncoded
     Observable<String> getToken(@Field("type") String type);
+
+    @POST("https://calcwiki.org/api.php?action=createaccount")
+    @FormUrlEncoded
+    Observable<String> register(@Field("name") String name, @Field("password") String password, @Field("email") String email, @Field("realname") String realname, @Field("language") String language);
+
 }

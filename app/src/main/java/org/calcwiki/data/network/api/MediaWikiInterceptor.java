@@ -43,7 +43,6 @@ public class MediaWikiInterceptor implements Interceptor {
             newFormBodyBuilder.add("format", "json");
 
             // Add usually needed Api params here
-            if (lgtoken != null) newFormBodyBuilder.add("lgtoken", lgtoken);
             if (token != null) newFormBodyBuilder.add("token", token);
             if (captchaid != null) newFormBodyBuilder.add("captchaid", captchaid);
             if (captchaword != null) newFormBodyBuilder.add("captchaword", captchaword);
@@ -55,14 +54,10 @@ public class MediaWikiInterceptor implements Interceptor {
         return chain.proceed(newRequest);
     }
 
-    String lgtoken;
-
-    public void setLgtoken(String lgtoken) {
-        this.lgtoken = lgtoken;
-    }
-
-    public void clearLgToken() {
-        this.lgtoken = null;
+    public void clearAll() {
+        token = null;
+        captchaid = null;
+        captchaword = null;
     }
 
     String token;
@@ -93,5 +88,10 @@ public class MediaWikiInterceptor implements Interceptor {
 
     public void clearCaptchaword() {
         this.captchaword = null;
+    }
+
+    public void clearCaptcha() {
+        captchaid = null;
+        captchaword = null;
     }
 }

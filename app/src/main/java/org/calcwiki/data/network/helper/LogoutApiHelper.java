@@ -4,7 +4,6 @@ import org.calcwiki.data.network.api.RestApi;
 
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**

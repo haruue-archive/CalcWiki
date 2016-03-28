@@ -5,12 +5,9 @@ import com.alibaba.fastjson.JSON;
 import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.api.RestApi;
 import org.calcwiki.data.storage.CurrentUser;
-import org.json.JSONArray;
 
-import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
