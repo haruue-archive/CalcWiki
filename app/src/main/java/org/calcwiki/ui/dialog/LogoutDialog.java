@@ -16,13 +16,13 @@ import me.drakeet.materialdialog.MaterialDialog;
  * 登出 Dialog
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
-public class DialogLogout {
+public class LogoutDialog {
 
     MaterialDialog dialog;
     Context context;
     ProgressDialog progressDialog;
 
-    public DialogLogout(Context context) {
+    public LogoutDialog(Context context) {
         this.context = context;
         dialog = new MaterialDialog(context)
                 .setTitle(R.string.are_you_sure_logout)

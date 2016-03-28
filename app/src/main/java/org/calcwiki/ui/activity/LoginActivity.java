@@ -119,6 +119,8 @@ public class LoginActivity extends AppCompatActivity {
                     LoginApiHelper.login(this);
                     break;
                 case R.id.button_register:
+                    finish();
+                    RegisterActivity.startAction(LoginActivity.this);
                     break;
                 case R.id.button_forget_password:
                     break;

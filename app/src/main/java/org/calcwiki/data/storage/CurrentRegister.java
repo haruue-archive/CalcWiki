@@ -16,7 +16,6 @@ public class CurrentRegister {
     public String token;
     public String email;
     public String realname;
-    public String language;
 
     private CurrentRegister() {
 

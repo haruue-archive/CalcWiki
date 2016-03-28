@@ -55,7 +55,7 @@ public class RegisterApiHelper {
             listener.onRegisterFailure(RegisterFailureReason.INVALID_EMAIL_ADDRESS_FORMAT);
             return;
         }
-        RestApi.getCalcWikiApiService().register(data.name, data.password, data.email, data.realname, data.language)
+        RestApi.getCalcWikiApiService().register(data.name, data.password, data.email, data.realname)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Func1<String, Observable<String>>() {
@@ -64,7 +64,7 @@ public class RegisterApiHelper {
                         RegisterModel.NeedToken result = JSON.parseObject(s, RegisterModel.NeedToken.class);
                         if (result != null && result.createaccount != null && result.createaccount.result.equals("NeedToken")) {
                             MediaWikiInterceptor.getInstance().setToken(result.createaccount.token);
-                            return RestApi.getCalcWikiApiService().register(data.name, data.password, data.email, data.realname, data.language);
+                            return RestApi.getCalcWikiApiService().register(data.name, data.password, data.email, data.realname);
                         } else {
                             return Observable.just(s);
                         }

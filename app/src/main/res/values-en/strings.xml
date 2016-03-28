@@ -41,4 +41,11 @@
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
     <string name="logouting">Logouting</string>
+    <string name="type_password_again">Type your password again</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email_address_optional">Email address (optional)</string>
+    <string name="realname">Real name</string>
+    <string name="realname_optional">Real name (optional) </string>
+    <string name="create_your_account">Create account</string>
+    <string name="tip_register">CalcWiki is made by people like you.</string>
 </resources>

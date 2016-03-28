@@ -4,7 +4,7 @@
     <string name="edit">編輯</string>
     <string name="not_login">未登錄</string>
     <string name="login">登入</string>
-    <string name="register">創建帳戶</string>
+    <string name="register">建立帳號</string>
     <string name="logout">登出</string>
     <string name="no_network">無網路連結</string>
     <string name="account_manage">帳戶管理</string>
@@ -25,7 +25,7 @@
     <string name="tip_login">歡迎來到計算器百科，請輸入您的帳戶名和密碼，然後輕觸[登入]按鈕</string>
     <string name="remember_me"> 記住我的登入狀態</string>
     <string name="forget_password">忘記密碼 ？</string>
-    <string name="create_account">創建帳戶</string>
+    <string name="create_account">建立帳號</string>
     <string name="have_no_account">沒有帳戶 ？</string>
     <string name="join_calcwiki">加入計算器百科</string>
     <string name="login_success">登入成功</string>
@@ -41,4 +41,11 @@
     <string name="yes">確認</string>
     <string name="no_person_data_will_be_persist_on_this_device">您的任何個人帳戶數據都不會被保留在此設備上</string>
     <string name="logouting">正在登出</string>
+    <string name="type_password_again">請再次鍵入密碼</string>
+    <string name="confirm_password">確認密碼</string>
+    <string name="email_address_optional">電郵地址（可選）</string>
+    <string name="realname">真實姓名</string>
+    <string name="realname_optional">真實姓名（可選）</string>
+    <string name="create_your_account">建立您的帳號</string>
+    <string name="tip_register">计算器百科 是由像您一樣貢獻的人所建立的。</string>
 </resources>

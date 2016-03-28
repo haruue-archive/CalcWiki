@@ -4,10 +4,156 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="org.calcwiki.ui.activity.RegisterActivity">
+
+    <include android:id="@+id/toolbar"
+             layout="@layout/toolbar_empty"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        android:scrollbars="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tip_above_login_activity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:text="@string/tip_register"
+                android:background="@drawable/tip_rect"
+                android:padding="10dp"
+                android:textColor="@color/yellow_tip_text"
+                android:textSize="15sp"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edittext_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tip_above_login_activity"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/username"
+                app:met_baseColor="@color/gray_900"
+                app:met_primaryColor="@color/gray_900"
+                app:met_underlineColor="@color/gray_900"
+                android:textColorHighlight="@color/gray_900"
+                app:met_floatingLabelTextColor="@color/gray_900"
+                app:met_errorColor="@color/red_500"
+                app:met_floatingLabel="highlight"
+                android:singleLine="true"
+                android:inputType="text|textNoSuggestions"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edittext_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edittext_username"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/password"
+                app:met_baseColor="@color/gray_900"
+                app:met_primaryColor="@color/gray_900"
+                app:met_underlineColor="@color/gray_900"
+                android:textColorHighlight="@color/gray_900"
+                app:met_floatingLabelTextColor="@color/gray_900"
+                app:met_errorColor="@color/red_500"
+                app:met_floatingLabel="highlight"
+                android:singleLine="true"
+                android:inputType="textPassword"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edittext_password_again"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edittext_password"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/type_password_again"
+                app:met_floatingLabelText="@string/confirm_password"
+                app:met_baseColor="@color/gray_900"
+                app:met_primaryColor="@color/gray_900"
+                app:met_underlineColor="@color/gray_900"
+                android:textColorHighlight="@color/gray_900"
+                app:met_floatingLabelTextColor="@color/gray_900"
+                app:met_errorColor="@color/red_500"
+                app:met_floatingLabel="highlight"
+                android:singleLine="true"
+                android:inputType="textPassword"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edittext_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edittext_password_again"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/email_address_optional"
+                app:met_floatingLabelText="@string/email"
+                app:met_baseColor="@color/gray_900"
+                app:met_primaryColor="@color/gray_900"
+                app:met_underlineColor="@color/gray_900"
+                android:textColorHighlight="@color/gray_900"
+                app:met_floatingLabelTextColor="@color/gray_900"
+                app:met_errorColor="@color/red_500"
+                app:met_floatingLabel="highlight"
+                android:singleLine="true"
+                android:inputType="text|textNoSuggestions|textEmailAddress"/>
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/edittext_realname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edittext_email"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:hint="@string/realname_optional"
+                app:met_floatingLabelText="@string/realname"
+                app:met_baseColor="@color/gray_900"
+                app:met_primaryColor="@color/gray_900"
+                app:met_underlineColor="@color/gray_900"
+                android:textColorHighlight="@color/gray_900"
+                app:met_floatingLabelTextColor="@color/gray_900"
+                app:met_errorColor="@color/red_500"
+                app:met_floatingLabel="highlight"
+                android:singleLine="true"
+                android:inputType="text|textNoSuggestions"/>
+
+            <com.gc.materialdesign.views.ButtonRectangle
+                android:id="@+id/button_register"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/edittext_realname"
+                android:background="@color/green_mediawiki_login_button"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_your_account"
+                    android:textColor="@color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold"/>
+
+            </com.gc.materialdesign.views.ButtonRectangle>
+
+        </RelativeLayout>
+
+
+    </ScrollView>
+
 
 </RelativeLayout>

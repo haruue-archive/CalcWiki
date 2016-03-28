@@ -17,8 +17,9 @@ import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.activity.LoginActivity;
+import org.calcwiki.ui.activity.RegisterActivity;
 import org.calcwiki.ui.adapter.MainDrawerMenuAdapter;
-import org.calcwiki.ui.dialog.DialogLogout;
+import org.calcwiki.ui.dialog.LogoutDialog;
 import org.calcwiki.ui.item.MainDrawerMenuItem;
 import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
 
@@ -145,11 +146,12 @@ public class MainDrawer {
                     LoginActivity.startAction(drawerLayout.getContext(), null);
                     break;
                 case R.id.logout_button_in_drawer_main:
-                    new DialogLogout(drawerLayout.getContext()).show();
+                    new LogoutDialog(drawerLayout.getContext()).show();
                     break;
                 case R.id.account_manage_button_in_drawer_main:
                     break;
                 case R.id.register_button_in_drawer_main:
+                    RegisterActivity.startAction(drawerLayout.getContext());
                     break;
             }
         }

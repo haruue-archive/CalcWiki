@@ -24,6 +24,6 @@ public interface ApiService {
 
     @POST("https://calcwiki.org/api.php?action=createaccount")
     @FormUrlEncoded
-    Observable<String> register(@Field("name") String name, @Field("password") String password, @Field("email") String email, @Field("realname") String realname, @Field("language") String language);
+    Observable<String> register(@Field("name") String name, @Field("password") String password, @Field("email") String email, @Field("realname") String realname);
 
 }
