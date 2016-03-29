@@ -48,4 +48,16 @@
     <string name="realname_optional">Real name (optional) </string>
     <string name="create_your_account">Create account</string>
     <string name="tip_register">CalcWiki is made by people like you.</string>
+    <string name="tip_on_captcha">To continue, please answer the question that appear below :</string>
+    <string name="your_answer">Your answer</string>
+    <string name="continue_">Continue</string>
+    <string name="create_account_success">Create Account Success</string>
+    <string name="username_exist">Username existed</string>
+    <string name="registering">Creating yout account</string>
+    <string name="captcha_error">Incorrect answer to captcha, please try again</string>
+    <string name="username_invalid">Invalid username</string>
+    <string name="server_exception_and_try_again">Server error, please try again</string>
+    <string name="password_can_not_same_as_username">Password can\'t be same as username</string>
+    <string name="invalid_email_address_format">Invalid email address format</string>
+    <string name="password_too_short">Password too short</string>
 </resources>

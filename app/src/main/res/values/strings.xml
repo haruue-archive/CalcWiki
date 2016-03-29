@@ -48,4 +48,16 @@
     <string name="realname_optional">真实姓名（可选）</string>
     <string name="create_your_account">创建您的账户</string>
     <string name="tip_register">计算器百科是由同你一样的人们构筑的。</string>
+    <string name="tip_on_captcha">为保护本wiki免受自动程序的破坏，我们恳请你回答下面显示的问题：</string>
+    <string name="your_answer">您的回答</string>
+    <string name="continue_">继续</string>
+    <string name="create_account_success">创建账户成功</string>
+    <string name="username_exist">用户名已被使用</string>
+    <string name="registering">正在创建账户</string>
+    <string name="captcha_error">验证回答错误，请重试</string>
+    <string name="username_invalid">用户名不合法</string>
+    <string name="server_exception_and_try_again">服务器异常，请重试</string>
+    <string name="password_can_not_same_as_username">密码不能与用户名相同</string>
+    <string name="invalid_email_address_format">电子邮箱地址格式不正确</string>
+    <string name="password_too_short">密码太短</string>
 </resources>

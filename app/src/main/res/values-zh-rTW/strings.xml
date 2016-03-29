@@ -48,4 +48,16 @@
     <string name="realname_optional">真實姓名（可選）</string>
     <string name="create_your_account">建立您的帳號</string>
     <string name="tip_register">计算器百科 是由像您一樣貢獻的人所建立的。</string>
+    <string name="tip_on_captcha">為了防止自動註冊程式，我們要麻煩您回答以下的問題：</string>
+    <string name="your_answer">您的回答</string>
+    <string name="continue_">繼續</string>
+    <string name="create_account_success">創建帳戶成功</string>
+    <string name="username_exist">帳戶名已被使用</string>
+    <string name="registering">正在建立帳戶</string>
+    <string name="captcha_error">驗證回答不正確，請再試一次</string>
+    <string name="username_invalid">非法的帳戶名</string>
+    <string name="server_exception_and_try_again">伺服器異常，請再試一次</string>
+    <string name="password_can_not_same_as_username">密碼不能與帳戶名相同</string>
+    <string name="invalid_email_address_format">電郵地址格式不正確</string>
+    <string name="password_too_short">密碼太短</string>
 </resources>

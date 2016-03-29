@@ -57,7 +57,6 @@ public class RegisterApiHelper {
         }
         RestApi.getCalcWikiApiService().register(data.name, data.password, data.email, data.realname)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Func1<String, Observable<String>>() {
                     @Override
                     public Observable<String> call(String s) {
