@@ -60,4 +60,5 @@
     <string name="password_can_not_same_as_username">密碼不能與帳戶名相同</string>
     <string name="invalid_email_address_format">電郵地址格式不正確</string>
     <string name="password_too_short">密碼太短</string>
+    <string name="confirm_password_different">两次密码輸入不一樣</string>
 </resources>

@@ -39,6 +39,7 @@ public class RegisterApiHelper {
         public final static int PASSWORD_NAME_MATCH = 256;
         public final static int INVALID_EMAIL_ADDRESS_FORMAT = 512;
         public final static int PASSWORD_TOO_SHORT = 1024;
+        public final static int CONFIRM_PASSWORD_DIFFERENT = 2048;
     }
 
     public static void register(final RegisterApiHelperListener listener) {
@@ -49,6 +50,10 @@ public class RegisterApiHelper {
         }
         if (data.password == null || data.password.isEmpty()) {
             listener.onRegisterFailure(RegisterFailureReason.EMPTY_PASSWORD);
+            return;
+        }
+        if (!data.password.equals(data.confirmPassword)) {
+            listener.onRegisterFailure(RegisterFailureReason.CONFIRM_PASSWORD_DIFFERENT);
             return;
         }
         if (!data.email.isEmpty() && Pattern.matches("^\\s*\\w+(?:\\.{0,1}[\\w-]+)*@[a-zA-Z0-9]+(?:[-.][a-zA-Z0-9]+)*\\.[a-zA-Z]+\\s*$", data.email)) {

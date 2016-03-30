@@ -60,4 +60,5 @@
     <string name="password_can_not_same_as_username">Password can\'t be same as username</string>
     <string name="invalid_email_address_format">Invalid email address format</string>
     <string name="password_too_short">Password too short</string>
+    <string name="confirm_password_different">Confirm password is not match</string>
 </resources>

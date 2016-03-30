@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.gc.materialdesign.views.ButtonRectangle;
@@ -21,6 +22,7 @@ import org.calcwiki.ui.dialog.CaptchaDialog;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    Toolbar toolbar;
     MaterialEditText usernameEditText;
     MaterialEditText passwordEditText;
     MaterialEditText confirmPasswordEditText;
@@ -39,6 +41,18 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void initializeUI() {
+        // Initialize Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.create_account);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+        // Initialize Widget
         usernameEditText = (MaterialEditText) findViewById(R.id.edittext_username);
         passwordEditText = (MaterialEditText) findViewById(R.id.edittext_password);
         confirmPasswordEditText = (MaterialEditText) findViewById(R.id.edittext_password_again);
@@ -112,6 +126,8 @@ public class RegisterActivity extends AppCompatActivity {
                  case RegisterApiHelper.RegisterFailureReason.PASSWORD_TOO_SHORT:
                      passwordEditText.setError(getResources().getString(R.string.password_too_short));
                      break;
+                 case RegisterApiHelper.RegisterFailureReason.CONFIRM_PASSWORD_DIFFERENT:
+                     confirmPasswordEditText.setError(getResources().getString(R.string.confirm_password_different));
 
             }
 
@@ -135,6 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
     public void refreshCurrentRegister() {
         CurrentRegister.getInstance().name = usernameEditText.getText().toString();
         CurrentRegister.getInstance().password = passwordEditText.getText().toString();
+        CurrentRegister.getInstance().confirmPassword = confirmPasswordEditText.getText().toString();
         CurrentRegister.getInstance().email = emailEditText.getText().toString();
         CurrentRegister.getInstance().realname = realNameEditText.getText().toString();
     }

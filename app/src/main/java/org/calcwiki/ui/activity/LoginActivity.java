@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.TextView;
@@ -111,12 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.button_login:
-                    progressDialog = new ProgressDialog(LoginActivity.this);
-                    progressDialog.setMessage(getResources().getString(R.string.logining));
-                    progressDialog.setCancelable(false);
-                    progressDialog.show();
-                    refreshCurrentLogin();
-                    LoginApiHelper.login(this);
+                    onLogin();
                     break;
                 case R.id.button_register:
                     finish();
@@ -126,6 +122,15 @@ public class LoginActivity extends AppCompatActivity {
                     break;
             }
 
+        }
+
+        public void onLogin() {
+            progressDialog = new ProgressDialog(LoginActivity.this);
+            progressDialog.setMessage(getResources().getString(R.string.logining));
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            refreshCurrentLogin();
+            LoginApiHelper.login(this);
         }
 
         @Override
@@ -164,6 +169,18 @@ public class LoginActivity extends AppCompatActivity {
         if (CurrentLogin.getInstance().password != null) {
             passwordEditText.setText(CurrentLogin.getInstance().password);
         }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_ENTER:
+                if (passwordEditText.hasFocus()) {
+                    new Listener().onLogin();
+                }
+                return true;
+        }
+        return false;
     }
 
     public static void startAction(Context context, String defaultUsername) {
