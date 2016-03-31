@@ -7,7 +7,6 @@ import android.support.annotation.IdRes;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -24,6 +23,8 @@ import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
+import org.calcwiki.ui.fragment.SearchFragment;
+import org.calcwiki.ui.listener.OptionsMenuListener;
 import org.calcwiki.ui.util.CurrentStateStorager;
 
 public class MainActivity extends AppCompatActivity implements CurrentUserChangeCaller.CurrentUserChangeListener {
@@ -35,6 +36,17 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     EditText searchEditText;
     InputMethodManager inputMethodManager;
     Handler handler;
+    int currentOptionsMenuStatus = -1;
+
+    public class OptionsMenuButtons {
+        public final static int ACTION_SEARCH = 1;
+        public final static int ACTION_EDIT = 2;
+        public final static int ACTION_VIEW_SOURCE = 4;
+        public final static int ACTION_CREATE = 8;
+        public final static int ACTION_HISTORY = 16;
+        public final static int ACTION_MOVE = 32;
+        public final static int ACTION_DELETE = 64;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         invalidateOptionsMenu();
     }
 
-    public class Listener implements Toolbar.OnMenuItemClickListener {
+    public class Listener implements Toolbar.OnMenuItemClickListener, OptionsMenuListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -111,6 +123,11 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
             }
             return false;
         }
+
+        @Override
+        public void setOptionsMenuStatus(int status) {
+            MainActivity.this.setOptionsMenuStatus(status);
+        }
     }
 
     @Override
@@ -121,22 +138,26 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (!CurrentUser.getInstance().isLogin) {
-            menu.findItem(R.id.action_history).setVisible(true);
-            menu.findItem(R.id.action_view_source).setVisible(true);
-            menu.findItem(R.id.action_search).setVisible(true);
-            menu.findItem(R.id.action_edit).setVisible(false);
-            menu.findItem(R.id.action_delete).setVisible(false);
-            menu.findItem(R.id.action_move).setVisible(false);
-        } else {
-            menu.findItem(R.id.action_history).setVisible(true);
-            menu.findItem(R.id.action_view_source).setVisible(false);
-            menu.findItem(R.id.action_search).setVisible(true);
-            menu.findItem(R.id.action_edit).setVisible(true);
-            menu.findItem(R.id.action_delete).setVisible(true);
-            menu.findItem(R.id.action_move).setVisible(true);
+        if (currentOptionsMenuStatus == -1) {
+            if (CurrentUser.getInstance().isLogin) {
+                currentOptionsMenuStatus = OptionsMenuButtons.ACTION_SEARCH | OptionsMenuButtons.ACTION_VIEW_SOURCE | OptionsMenuButtons.ACTION_HISTORY;
+            } else {
+                currentOptionsMenuStatus = OptionsMenuButtons.ACTION_SEARCH | OptionsMenuButtons.ACTION_EDIT | OptionsMenuButtons.ACTION_HISTORY | OptionsMenuButtons.ACTION_MOVE;
+            }
         }
+        menu.findItem(R.id.action_search).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_SEARCH) != 0);
+        menu.findItem(R.id.action_edit).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_EDIT) != 0);
+        menu.findItem(R.id.action_view_source).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_VIEW_SOURCE) != 0);
+        menu.findItem(R.id.action_create).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_CREATE) != 0);
+        menu.findItem(R.id.action_history).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_HISTORY) != 0);
+        menu.findItem(R.id.action_move).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_MOVE) != 0);
+        menu.findItem(R.id.action_delete).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_DELETE) != 0);
         return true;
+    }
+
+    public void setOptionsMenuStatus(int status) {
+        currentOptionsMenuStatus = status;
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -185,9 +206,9 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
             searchEditText.setVisibility(View.GONE);
             return;
         }
-        // TODO: Please implement this method
-        // These codes only for debug
-        JUtils.Toast(searchEditText.getText().toString());
-        JUtils.Log(searchEditText.getText().toString());
+        String keyWord = searchEditText.getText().toString();
+        SearchFragment fragment = new SearchFragment();
+        fragment.initialize(keyWord, new Listener());
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment, "search://" + keyWord).commit();
     }
 }

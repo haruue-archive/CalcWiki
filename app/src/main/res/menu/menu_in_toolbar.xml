@@ -20,6 +20,12 @@
           android:orderInCategory="21"
           app:showAsAction="ifRoom"/>
 
+    <item android:id="@+id/action_create"
+          android:title="@string/create_page"
+          android:icon="@drawable/ic_photo_filter_black_24dp"
+          android:orderInCategory="22"
+          app:showAsAction="ifRoom"/>
+
     <item android:id="@+id/action_history"
           android:title="@string/view_history"
           android:icon="@drawable/ic_restore_black_24dp"

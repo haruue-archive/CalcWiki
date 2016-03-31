@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:id="@+id/whole_item"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:foreground="?attr/selectableItemBackground"
+              android:padding="12dp">
+
+    <TextView
+        android:id="@+id/textview_title_in_search_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="测试标题"
+        android:textColor="@color/blue_links"
+        android:textSize="20sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/textview_snippet_in_search_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="2dp"
+        tools:text="测试片段"
+        android:textColor="@color/black"
+        android:textSize="15sp" />
+
+</LinearLayout>

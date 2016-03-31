@@ -61,4 +61,7 @@
     <string name="invalid_email_address_format">電郵地址格式不正確</string>
     <string name="password_too_short">密碼太短</string>
     <string name="confirm_password_different">两次密码輸入不一樣</string>
+    <string name="create_page">創建頁面</string>
+    <string name="loading_more">加載更多…</string>
+    <string name="not_found">在計算器百科上找不到您需要的條目，歡迎你貢獻此條目</string>
 </resources>

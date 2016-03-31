@@ -26,4 +26,7 @@ public interface ApiService {
     @FormUrlEncoded
     Observable<String> register(@Field("name") String name, @Field("password") String password, @Field("email") String email, @Field("realname") String realname);
 
+    @POST("https://calcwiki.org/api.php?action=query&list=search")
+    @FormUrlEncoded
+    Observable<String> search(@Field("srsearch") String srsearch, @Field("srwhat") String srwhat, @Field("sroffset") String sroffset);
 }

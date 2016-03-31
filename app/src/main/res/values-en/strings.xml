@@ -61,4 +61,7 @@
     <string name="invalid_email_address_format">Invalid email address format</string>
     <string name="password_too_short">Password too short</string>
     <string name="confirm_password_different">Confirm password is not match</string>
+    <string name="create_page">Create Page</string>
+    <string name="loading_more">Loading more...</string>
+    <string name="not_found">Sorry, there is no any page match the words you entered. however, you can create this page.</string>
 </resources>
