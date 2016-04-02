@@ -29,4 +29,8 @@ public interface ApiService {
     @POST("https://calcwiki.org/api.php?action=query&list=search")
     @FormUrlEncoded
     Observable<String> search(@Field("srsearch") String srsearch, @Field("srwhat") String srwhat, @Field("sroffset") String sroffset);
+
+    @POST("https://calcwiki.org/api.php?action=mobileview&sections=0-|references")
+    @FormUrlEncoded
+    Observable<String> getPage(@Field("page") String pageName, @Field("redirect") String isRedirect, @Field("prop") String prop);
 }
