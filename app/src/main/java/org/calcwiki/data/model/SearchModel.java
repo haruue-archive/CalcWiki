@@ -2,6 +2,7 @@ package org.calcwiki.data.model;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public class SearchModel {
             public String continueX;
         }
 
-        public static class QueryEntity {
+        public static class QueryEntity implements Serializable {
             /**
              * totalhits : 6
              */
@@ -64,12 +65,12 @@ public class SearchModel {
             @JSONField(name = "search")
             public List<SearchEntity> search;
 
-            public static class SearchinfoEntity {
+            public static class SearchinfoEntity implements Serializable {
                 @JSONField(name = "totalhits")
                 public int totalhits;
             }
 
-            public static class SearchEntity {
+            public static class SearchEntity implements Serializable {
                 @JSONField(name = "ns")
                 public int ns;
                 @JSONField(name = "title")

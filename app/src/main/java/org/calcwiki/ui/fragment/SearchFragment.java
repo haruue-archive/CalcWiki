@@ -3,7 +3,6 @@ package org.calcwiki.ui.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,11 +16,13 @@ import org.calcwiki.data.model.SearchModel;
 import org.calcwiki.data.network.helper.SearchApiHelper;
 import org.calcwiki.ui.activity.MainActivity;
 import org.calcwiki.ui.adapter.SearchResultListAdapter;
-import org.calcwiki.ui.listener.OptionsMenuListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 显示搜索结果的 Fragment
+ * 只能放入 {@link MainActivity}
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class SearchFragment extends Fragment {
@@ -29,12 +30,11 @@ public class SearchFragment extends Fragment {
     String keyWord;
     EasyRecyclerView resultRecyclerView;
     SearchResultListAdapter adapter;
-    OptionsMenuListener optionsMenuListener;
+    ArrayList<SearchModel.Result.QueryEntity.SearchEntity> results = new ArrayList<SearchModel.Result.QueryEntity.SearchEntity>(0);
     int nextOffset = 0;
 
-    public SearchFragment initialize(String keyWord, OptionsMenuListener listener) {
+    public SearchFragment initialize(String keyWord) {
         this.keyWord = keyWord;
-        this.optionsMenuListener = listener;
         return this;
     }
 
@@ -52,14 +52,32 @@ public class SearchFragment extends Fragment {
         resultRecyclerView.showProgress();
         SearchApiHelper.search(keyWord, 0, new Listener());
         // Toolbar
-        optionsMenuListener.setOptionsMenuStatus(MainActivity.OptionsMenuButtons.ACTION_SEARCH);
+        ((MainActivity) getActivity()).setOptionsMenuStatus(MainActivity.OptionsMenuButtons.ACTION_SEARCH);
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(this.getClass().getName() + "keyWord", keyWord);
+        outState.putSerializable(this.getClass().getName() + "results", results);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            keyWord = savedInstanceState.getString(this.getClass().getName() + "keyWord");
+            results.addAll((ArrayList<SearchModel.Result.QueryEntity.SearchEntity>) savedInstanceState.getSerializable(this.getClass().getName() + "results"));
+            adapter.addAll(results);
+        }
     }
 
     class Listener implements SearchApiHelper.SearchApiHelperListener, RecyclerArrayAdapter.OnLoadMoreListener {
 
         @Override
         public void onSearchResult(List<SearchModel.Result.QueryEntity.SearchEntity> result, int nextOffset) {
+            SearchFragment.this.results.addAll(result);
             adapter.addAll(result);
             SearchFragment.this.nextOffset = nextOffset;
             if (nextOffset == -1) {

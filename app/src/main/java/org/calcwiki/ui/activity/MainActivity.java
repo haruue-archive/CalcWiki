@@ -24,7 +24,6 @@ import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
 import org.calcwiki.ui.fragment.SearchFragment;
-import org.calcwiki.ui.listener.OptionsMenuListener;
 import org.calcwiki.ui.util.CurrentStateStorager;
 
 public class MainActivity extends AppCompatActivity implements CurrentUserChangeCaller.CurrentUserChangeListener {
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     InputMethodManager inputMethodManager;
     Handler handler;
     int currentOptionsMenuStatus = -1;
+    String currentFragmentTag;
 
     public class OptionsMenuButtons {
         public final static int ACTION_SEARCH = 1;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         invalidateOptionsMenu();
     }
 
-    public class Listener implements Toolbar.OnMenuItemClickListener, OptionsMenuListener {
+    public class Listener implements Toolbar.OnMenuItemClickListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -124,10 +124,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
             return false;
         }
 
-        @Override
-        public void setOptionsMenuStatus(int status) {
-            MainActivity.this.setOptionsMenuStatus(status);
-        }
     }
 
     @Override
@@ -208,7 +204,8 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         }
         String keyWord = searchEditText.getText().toString();
         SearchFragment fragment = new SearchFragment();
-        fragment.initialize(keyWord, new Listener());
-        getFragmentManager().beginTransaction().replace(R.id.container, fragment, "search://" + keyWord).commit();
+        fragment.initialize(keyWord);
+        currentFragmentTag = "search://" + keyWord;
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment, currentFragmentTag).commit();
     }
 }
