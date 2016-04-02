@@ -1,5 +1,6 @@
 package org.calcwiki.ui.activity;
 
+import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,15 +15,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.balysv.materialmenu.MaterialMenuDrawable;
 import com.jude.utils.JUtils;
 
 import org.calcwiki.BuildConfig;
 import org.calcwiki.R;
+import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
+import org.calcwiki.ui.fragment.PageFragment;
 import org.calcwiki.ui.fragment.SearchFragment;
 import org.calcwiki.ui.util.CurrentStateStorager;
 
@@ -36,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     InputMethodManager inputMethodManager;
     Handler handler;
     int currentOptionsMenuStatus = -1;
-    String currentFragmentTag;
 
     public class OptionsMenuButtons {
         public final static int ACTION_SEARCH = 1;
@@ -64,8 +67,8 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         toolbar = (Toolbar) findViewById(toolbarId);
         drawerLayout = (DrawerLayout) findViewById(drawerId);
         mainDrawer = MainDrawer.getInstance(drawerLayout);
-        toolbar.setTitle(R.string.calcwiki);
         setSupportActionBar(toolbar);
+        setTitle(getResources().getString(R.string.calcwiki));
         materialMenu = new MaterialMenuDrawable(this, Color.BLACK, MaterialMenuDrawable.Stroke.THIN);
         getSupportActionBar().setHomeAsUpIndicator(materialMenu);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         toolbar.setOnMenuItemClickListener(new Listener());
         // Initialize widget in toolbar
         searchEditText = (EditText) findViewById(R.id.edittext_search_in_toolbar);
-        searchEditText.setVisibility(View.GONE);
+        hideSearchBar();
         searchEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -88,12 +91,20 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {  // Check Drawer
             drawerLayout.closeDrawer(GravityCompat.START);
-        } else if (searchEditText.getVisibility() == View.VISIBLE) {
+        } else if (searchEditText.getVisibility() == View.VISIBLE) {  // Check Search Bar
             searchEditText.setText("");
-            searchEditText.setVisibility(View.GONE);
-        } else {
+            hideSearchBar();
+        } else if (CurrentFragment.getInstance().hasPrev()) {  // Press back key for prev fragment
+            CurrentFragment.FragmentInfo info = CurrentFragment.getInstance().getPrevFragmentInfo();
+            if (getFragmentManager().findFragmentByTag(info.tag) != null) {
+                setFragment(getFragmentManager().findFragmentByTag(info.tag), info.tag);
+            } else {
+                CurrentFragment.InitializibleFragment fragment = info.getReinitializeFragmentInstance();
+                setFragment(fragment, info.tag);
+            }
+        } else {  // exit
             super.onBackPressed();
         }
     }
@@ -113,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
                         drawerLayout.closeDrawer(GravityCompat.START);
                     }
                     if (searchEditText.getVisibility() == View.GONE) {
-                        searchEditText.setVisibility(View.VISIBLE);
+                        showSearchBar();
                         searchEditText.requestFocus();
                         inputMethodManager.showSoftInput(searchEditText, InputMethodManager.SHOW_IMPLICIT);
                     } else {
@@ -199,13 +210,36 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         JUtils.closeInputMethod(this);
         // Check empty and satisfy someone who enjoy the appearing and disappearing of the search view
         if (searchEditText.getText().toString().equals("")) {
-            searchEditText.setVisibility(View.GONE);
+            hideSearchBar();
             return;
         }
         String keyWord = searchEditText.getText().toString();
         SearchFragment fragment = new SearchFragment();
         fragment.initialize(keyWord);
-        currentFragmentTag = "search://" + keyWord;
-        getFragmentManager().beginTransaction().replace(R.id.container, fragment, currentFragmentTag).commit();
+        String tag = "search://" + keyWord;
+        setFragment(fragment, tag);
+        CurrentFragment.getInstance().push(fragment);
+        searchEditText.setText("");
+        hideSearchBar();
+    }
+
+    public void setFragment(Fragment fragment, String tag) {
+        getFragmentManager().beginTransaction().replace(R.id.container, fragment, tag).commit();
+    }
+
+    public void setTitle(String text) {
+        ((TextView) toolbar.findViewById(R.id.title_in_toolbar)).setText(text);
+    }
+
+    public void showSearchBar() {
+        searchEditText.setVisibility(View.VISIBLE);
+        // Make title gone
+        toolbar.findViewById(R.id.title_in_toolbar).setVisibility(View.GONE);
+    }
+
+    public void hideSearchBar() {
+        // show title
+        toolbar.findViewById(R.id.title_in_toolbar).setVisibility(View.VISIBLE);
+        searchEditText.setVisibility(View.GONE);
     }
 }

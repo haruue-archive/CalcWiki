@@ -32,24 +32,17 @@ public class SearchResultListAdapter extends RecyclerArrayAdapter<SearchModel.Re
 
         TextView titleTextView;
         TextView snippetTextView;
-        LinearLayout wholeItem;
 
         public SearchResultListViewHolder(ViewGroup parent) {
             super(parent, R.layout.item_search_result);
             titleTextView = $(R.id.textview_title_in_search_result);
             snippetTextView = $(R.id.textview_snippet_in_search_result);
-            wholeItem = $(R.id.whole_item);
         }
 
         @Override
         public void setData(SearchModel.Result.QueryEntity.SearchEntity data) {
             titleTextView.setText(data.title);
             snippetTextView.setText(SearchResultHighLight.highLightByClass(data.snippet));
-            if (getPosition() % 2 != 0) {
-                JUtils.Log("AdapterPosition", getAdapterPosition() + "");
-                JUtils.Log("LayoutPosition", getLayoutPosition() + "");
-                wholeItem.setBackgroundColor(Utils.getApplication().getResources().getColor(R.color.gray_200));
-            }
         }
 
     }

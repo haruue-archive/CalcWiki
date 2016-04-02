@@ -2,6 +2,7 @@ package org.calcwiki.ui.util;
 
 import android.os.Bundle;
 
+import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentUser;
 
 import java.io.Serializable;
@@ -21,16 +22,22 @@ import java.io.Serializable;
  CurrentStateStorager.restore(savedInstanceState);
  }
  </code>
+ * 每个被存储的对象都采取单例模式，并实现方法 <code>
+ public static {@link Serializable} getInstance();
+ public static void restoreInstance({@link Serializable} instance);
+ * </code>
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class CurrentStateStorager {
 
     public static void save(Bundle outState) {
         outState.putSerializable(CurrentUser.class.getName(), CurrentUser.getInstance());
+        outState.putSerializable(CurrentFragment.class.getName(), CurrentFragment.getInstance());
     }
 
     public static void restore(Bundle savedInstanceState) {
         CurrentUser.restoreInstance(savedInstanceState.getSerializable(CurrentUser.class.getName()));
+        CurrentFragment.restoreInstance(savedInstanceState.getSerializable(CurrentFragment.class.getName()));
     }
 
 }

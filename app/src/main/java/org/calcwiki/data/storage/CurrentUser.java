@@ -11,6 +11,7 @@ import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.cookie.PersistentCookieJar;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
+import org.calcwiki.ui.util.CurrentStateStorager;
 import org.calcwiki.util.Utils;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import rx.functions.Action1;
 
 /**
  * 登陆后的用户信息存储
+ * 请放入 {@link org.calcwiki.ui.util.CurrentStateStorager}存储
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class CurrentUser implements Serializable {

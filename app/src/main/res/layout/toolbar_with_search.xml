@@ -9,6 +9,17 @@
         android:layout_height="wrap_content"
         android:gravity="center_vertical">
 
+        <TextView
+            android:id="@+id/title_in_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:imeOptions="actionSearch"
+            android:padding="3dp"
+            android:singleLine="true"
+            android:textSize="25sp"
+            android:textColor="@color/black"/>
+
         <EditText
             android:id="@+id/edittext_search_in_toolbar"
             android:layout_width="match_parent"
@@ -18,6 +29,7 @@
             android:padding="3dp"
             android:singleLine="true"
             android:textSize="25sp"
+            android:textColor="@color/black"
             android:hint="@string/search"
             android:visibility="gone"/>
 

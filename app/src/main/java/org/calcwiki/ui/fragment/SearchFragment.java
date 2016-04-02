@@ -14,6 +14,7 @@ import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 import org.calcwiki.R;
 import org.calcwiki.data.model.SearchModel;
 import org.calcwiki.data.network.helper.SearchApiHelper;
+import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.ui.activity.MainActivity;
 import org.calcwiki.ui.adapter.SearchResultListAdapter;
 
@@ -25,7 +26,7 @@ import java.util.List;
  * 只能放入 {@link MainActivity}
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
-public class SearchFragment extends Fragment {
+public class SearchFragment extends CurrentFragment.InitializibleFragment {
 
     String keyWord;
     EasyRecyclerView resultRecyclerView;
@@ -33,15 +34,16 @@ public class SearchFragment extends Fragment {
     ArrayList<SearchModel.Result.QueryEntity.SearchEntity> results = new ArrayList<SearchModel.Result.QueryEntity.SearchEntity>(0);
     int nextOffset = 0;
 
-    public SearchFragment initialize(String keyWord) {
+    @Override
+    public void initialize(String keyWord) {
         this.keyWord = keyWord;
-        return this;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
+        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search) + " \"" + keyWord + "\"");
         resultRecyclerView = (EasyRecyclerView) view.findViewById(R.id.list_result);
         adapter = new SearchResultListAdapter(getActivity());
         resultRecyclerView.setAdapter(adapter);
@@ -54,6 +56,10 @@ public class SearchFragment extends Fragment {
         // Toolbar
         ((MainActivity) getActivity()).setOptionsMenuStatus(MainActivity.OptionsMenuButtons.ACTION_SEARCH);
         return view;
+    }
+
+    public String getKeyWord() {
+        return keyWord;
     }
 
     @Override
