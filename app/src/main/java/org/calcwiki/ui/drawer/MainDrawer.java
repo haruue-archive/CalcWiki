@@ -5,6 +5,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,11 +18,13 @@ import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.activity.LoginActivity;
+import org.calcwiki.ui.activity.MainActivity;
 import org.calcwiki.ui.activity.RegisterActivity;
 import org.calcwiki.ui.adapter.MainDrawerMenuAdapter;
 import org.calcwiki.ui.dialog.LogoutDialog;
 import org.calcwiki.ui.item.MainDrawerMenuItem;
 import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
+import org.calcwiki.util.Utils;
 
 public class MainDrawer {
 
@@ -173,7 +176,11 @@ public class MainDrawer {
 
         @Override
         public void onItemClick(int position) {
-
+            String itemTitle = menuAdapter.getItem(position).getTitle();
+            if (itemTitle.equals(Utils.getApplication().getResources().getString(R.string.main_page))) {
+                ((MainActivity) drawerLayout.getContext()).showPage("计算器百科:首页");
+            }
+            drawerLayout.closeDrawer(Gravity.LEFT);
         }
     }
 

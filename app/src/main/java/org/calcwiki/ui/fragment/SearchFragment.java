@@ -3,6 +3,7 @@ package org.calcwiki.ui.fragment;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
+import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
 import org.calcwiki.data.model.SearchModel;
@@ -57,6 +59,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         adapter.setNoMore(R.layout.view_no_more);
         adapter.setMore(R.layout.view_more, new Listener());
         adapter.setOnItemClickListener(new Listener());
+        resultRecyclerView.setRefreshListener(new Listener());
         // Begin load first page
         resultRecyclerView.showProgress();
         SearchApiHelper.search(keyWord, 0, new Listener());
@@ -87,7 +90,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         }
     }
 
-    class Listener implements SearchApiHelper.SearchApiHelperListener, RecyclerArrayAdapter.OnLoadMoreListener, PageApiHelper.CheckPageExistApiHelperListener, RecyclerArrayAdapter.OnItemClickListener {
+    class Listener implements SearchApiHelper.SearchApiHelperListener, RecyclerArrayAdapter.OnLoadMoreListener, PageApiHelper.CheckPageExistApiHelperListener, RecyclerArrayAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
         @Override
         public void onSearchResult(List<SearchModel.Result.QueryEntity.SearchEntity> result, int nextOffset) {
@@ -105,16 +108,19 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         public void onSearchFailure(int reason) {
             switch (reason) {
                 case SearchApiHelper.SearchFailureReason.EMPTY_RESULT:
-                    resultRecyclerView.showEmpty();
+                    resultRecyclerView.showRecycler();
+                    adapter.stopMore();
                     break;
                 case SearchApiHelper.SearchFailureReason.NO_MORE:
                     adapter.stopMore();
                     break;
                 case SearchApiHelper.SearchFailureReason.NETWORK_ERROR:
                     resultRecyclerView.showError();
+                    JUtils.Toast(getResources().getString(R.string.no_network));
                     break;
                 case SearchApiHelper.SearchFailureReason.SERVER_ERROR:
                     resultRecyclerView.showError();
+                    JUtils.Toast(getResources().getString(R.string.server_exception_and_try_again));
                     break;
             }
 
@@ -178,6 +184,16 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         @Override
         public void onItemClick(int position) {
             ((MainActivity) getActivity()).showPage(adapter.getItem(position).title);
+        }
+
+        @Override
+        public void onRefresh() {
+            resultRecyclerView.showProgress();
+            results.clear();
+            adapter.clear();
+            adapter.removeAllHeader();
+            SearchApiHelper.search(keyWord, 0, this);
+            PageApiHelper.checkPageExistState(keyWord, this);
         }
     }
 }

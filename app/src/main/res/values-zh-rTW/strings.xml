@@ -67,4 +67,5 @@
     <string name="redirect_from">重定向自 </string>
     <string name="search_header_page_exist">計算器百科上有名為“%1$s”的頁面</string>
     <string name="search_header_page_not_exist_but_createable">在計算器百科上新建名為“%1$s”的頁面！</string>
+    <string name="touch_title_to_expand_content">觸摸每一小節的小題來展開本小節的內容</string>
 </resources>

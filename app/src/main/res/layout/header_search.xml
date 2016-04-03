@@ -12,6 +12,6 @@
         android:layout_height="wrap_content"
         tool:text="计算器百科上存在名为CAS的页面"
         android:textColor="@color/black"
-        android:textSize="18sp"/>
+        android:textSize="20sp"/>
 
 </LinearLayout>

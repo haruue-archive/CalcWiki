@@ -2,17 +2,14 @@ package org.calcwiki.ui.adapter;
 
 import android.content.Context;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jude.easyrecyclerview.adapter.BaseViewHolder;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
-import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
 import org.calcwiki.data.model.SearchModel;
-import org.calcwiki.ui.util.SearchResultHighLight;
-import org.calcwiki.util.Utils;
+import org.calcwiki.ui.util.HighLight;
 
 /**
  * @author Haruue Icymoon haruue@caoyue.com.cn
@@ -42,7 +39,7 @@ public class SearchResultListAdapter extends RecyclerArrayAdapter<SearchModel.Re
         @Override
         public void setData(SearchModel.Result.QueryEntity.SearchEntity data) {
             titleTextView.setText(data.title);
-            snippetTextView.setText(SearchResultHighLight.highLightByClass(data.snippet));
+            snippetTextView.setText(HighLight.highLightSearchResult(data.snippet));
         }
 
     }

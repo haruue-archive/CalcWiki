@@ -67,4 +67,5 @@
     <string name="redirect_from">Redirected from </string>
     <string name="search_header_page_exist">There is a page named "%1$s" on CalcWiki</string>
     <string name="search_header_page_not_exist_but_createable">Create a page named "%1$s" on CalcWiki now !</string>
+    <string name="touch_title_to_expand_content">Touch title of every section to expand content</string>
 </resources>

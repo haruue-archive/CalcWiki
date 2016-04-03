@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         // Initialize Handler
         handler = new Handler(getMainLooper());
+        showPage("计算器百科:首页");
     }
 
     protected void initializeToolbarAndDrawer(@IdRes int toolbarId, @IdRes int drawerId) {
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
                 }
             }
         });
+        searchEditText.setOnKeyListener(new Listener());
         CurrentUserChangeCaller.getInstance().addCurrentUserListener(this);
     }
 
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         invalidateOptionsMenu();
     }
 
-    public class Listener implements Toolbar.OnMenuItemClickListener {
+    public class Listener implements Toolbar.OnMenuItemClickListener, View.OnKeyListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -135,6 +137,15 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
             return false;
         }
 
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            switch (v.getId()) {
+                case R.id.edittext_search_in_toolbar:
+                    doSearch();
+                    return true;
+            }
+            return false;
+        }
     }
 
     @Override
@@ -165,19 +176,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     public void setOptionsMenuStatus(int status) {
         currentOptionsMenuStatus = status;
         invalidateOptionsMenu();
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_ENTER:
-                if (searchEditText.hasFocus()) {
-                    doSearch();
-                }
-                return true;
-            default:
-                return super.onKeyUp(keyCode, event);
-        }
     }
 
     @Override
@@ -244,8 +242,16 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     }
 
     public void showPage(String pageName) {
-        // TODO: complete it
-        JUtils.Toast("显示页面" + pageName);
+        PageFragment fragment = new PageFragment();
+        fragment.initialize(pageName);
+        String tag = "page://" + pageName;
+        setFragment(fragment, tag);
+        CurrentFragment.getInstance().push(fragment);
+    }
+
+    public void showPageWithoutRedirect(String pageName) {
+        pageName = pageName + "#NO_REDIRECT";
+        showPage(pageName);
     }
 
     public void createPage(String pageName) {

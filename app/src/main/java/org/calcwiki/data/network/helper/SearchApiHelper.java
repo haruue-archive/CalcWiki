@@ -41,6 +41,7 @@ public class SearchApiHelper {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         listener.onSearchFailure(SearchFailureReason.NETWORK_ERROR);
                     }
 
@@ -60,7 +61,7 @@ public class SearchApiHelper {
                             return;
                         }
                         if (result.continueX != null && result.continueX.continueX != null) {
-                            listener.onSearchResult(result.query.search, Integer.parseInt(result.continueX.continueX));
+                            listener.onSearchResult(result.query.search, result.continueX.sroffset);
                         } else {
                             listener.onSearchResult(result.query.search, -1);
                         }
