@@ -4,15 +4,20 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 
 import org.calcwiki.R;
 import org.calcwiki.data.model.SearchModel;
+import org.calcwiki.data.network.helper.PageApiHelper;
 import org.calcwiki.data.network.helper.SearchApiHelper;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.ui.activity.MainActivity;
@@ -24,6 +29,7 @@ import java.util.List;
 /**
  * 显示搜索结果的 Fragment
  * 只能放入 {@link MainActivity}
+ *
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class SearchFragment extends CurrentFragment.InitializibleFragment {
@@ -50,9 +56,11 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         resultRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.setNoMore(R.layout.view_no_more);
         adapter.setMore(R.layout.view_more, new Listener());
+        adapter.setOnItemClickListener(new Listener());
         // Begin load first page
         resultRecyclerView.showProgress();
         SearchApiHelper.search(keyWord, 0, new Listener());
+        PageApiHelper.checkPageExistState(keyWord, new Listener());
         // Toolbar
         ((MainActivity) getActivity()).setOptionsMenuStatus(MainActivity.OptionsMenuButtons.ACTION_SEARCH);
         return view;
@@ -79,7 +87,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         }
     }
 
-    class Listener implements SearchApiHelper.SearchApiHelperListener, RecyclerArrayAdapter.OnLoadMoreListener {
+    class Listener implements SearchApiHelper.SearchApiHelperListener, RecyclerArrayAdapter.OnLoadMoreListener, PageApiHelper.CheckPageExistApiHelperListener, RecyclerArrayAdapter.OnItemClickListener {
 
         @Override
         public void onSearchResult(List<SearchModel.Result.QueryEntity.SearchEntity> result, int nextOffset) {
@@ -119,6 +127,57 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
             } else {
                 SearchApiHelper.search(keyWord, nextOffset, new Listener());
             }
+        }
+
+        @Override
+        public void onGetPageExistState(final boolean isPageExist) {
+            adapter.addHeader(new RecyclerArrayAdapter.ItemView() {
+                @Override
+                public View onCreateView(ViewGroup parent) {
+                    View headerView = SearchFragment.this.getActivity().getLayoutInflater().inflate(R.layout.header_search, parent, false);
+                    SpannableStringBuilder colorTip;
+                    if (isPageExist) {
+                        String tip = String.format(getResources().getString(R.string.search_header_page_exist), keyWord);
+                        colorTip = new SpannableStringBuilder(tip);
+                        colorTip.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.blue_links)), tip.lastIndexOf(keyWord), tip.lastIndexOf(keyWord) + keyWord.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        headerView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((MainActivity) getActivity()).showPage(keyWord);
+                            }
+                        });
+                    } else {
+                        String tip = String.format(getResources().getString(R.string.search_header_page_not_exist_but_createable), keyWord);
+                        colorTip = new SpannableStringBuilder(tip);
+                        colorTip.setSpan(new ForegroundColorSpan(getResources().getColor(R.color.red_links)), tip.lastIndexOf(keyWord), tip.lastIndexOf(keyWord) + keyWord.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        headerView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((MainActivity) getActivity()).createPage(keyWord);
+                            }
+                        });
+                    }
+                    ((TextView) headerView.findViewById(R.id.page_exist_tip_in_search_header)).setText(colorTip);
+                    return headerView;
+                }
+
+                @Override
+                public void onBindView(View headerView) {
+
+                }
+            });
+            adapter.getHeader(0);
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onGetPageExistStateFailure(int reason) {
+
+        }
+
+        @Override
+        public void onItemClick(int position) {
+            ((MainActivity) getActivity()).showPage(adapter.getItem(position).title);
         }
     }
 }

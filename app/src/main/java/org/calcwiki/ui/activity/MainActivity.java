@@ -242,4 +242,14 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         toolbar.findViewById(R.id.title_in_toolbar).setVisibility(View.VISIBLE);
         searchEditText.setVisibility(View.GONE);
     }
+
+    public void showPage(String pageName) {
+        // TODO: complete it
+        JUtils.Toast("显示页面" + pageName);
+    }
+
+    public void createPage(String pageName) {
+        // TODO: complete it
+        JUtils.Toast("创建页面" + pageName);
+    }
 }

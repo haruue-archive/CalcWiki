@@ -101,4 +101,40 @@ public class MobileViewModel {
         }
     }
 
+    public static class Error {
+
+        /**
+         * code : missingtitle
+         * info : The page you requested doesn't exist
+         */
+
+        @JSONField(name = "error")
+        public ErrorEntity error;
+
+        public static class ErrorEntity {
+            @JSONField(name = "code")
+            public String code;
+            @JSONField(name = "info")
+            public String info;
+        }
+    }
+
+    public static class CheckPageExist {
+
+        /**
+         * redirected : 计算机代数系统
+         * sections : []
+         */
+
+        @JSONField(name = "mobileview")
+        public MobileviewEntity mobileview;
+
+        public static class MobileviewEntity {
+            @JSONField(name = "redirected")
+            public String redirected;
+            @JSONField(name = "sections")
+            public List<?> sections;
+        }
+    }
+
 }

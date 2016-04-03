@@ -11,6 +11,7 @@ import org.calcwiki.R;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.ui.drawer.MainDrawer;
 
+import cn.com.caoyue.util.time.Time;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -74,6 +75,16 @@ public class Utils {
                         callback.call(s);
                     }
                 });
+    }
+
+    /**
+     * 将 ISO 8601 时间戳转换为 Haruue 时间工具
+     * @param iso8601time ISO 8601 时间戳
+     * @return 时间工具实例
+     * @see <a href="http://haruue.github.io/Time_Class_Util/">http://haruue.github.io/Time_Class_Util/</a>
+     */
+    public static Time isoTimeToTime(String iso8601time) {
+        return new Time(iso8601time, "yyyy-MM-ddThh:mm:ssZ");
     }
 
     /**

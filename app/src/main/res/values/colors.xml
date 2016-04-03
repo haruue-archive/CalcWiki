@@ -18,4 +18,5 @@
     <color name="green_mediawiki_login_button">#008C6D</color>
     <color name="blue_mediawiki_join_button">#2962CC</color>
     <color name="blue_links">#0645AD</color>
+    <color name="red_links">#ba0000</color>
 </resources>

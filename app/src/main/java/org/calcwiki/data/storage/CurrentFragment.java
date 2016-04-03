@@ -78,7 +78,7 @@ public class CurrentFragment implements Serializable {
             currentIndex++;
         } else if (fragment instanceof PageFragment) {
             info.kind = PAGE_FRAGMENT;
-            info.extString = ((PageFragment) fragment).getUrl();
+            info.extString = ((PageFragment) fragment).getPageName();
             infoList.add(info);
             currentIndex++;
         } else {

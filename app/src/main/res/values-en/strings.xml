@@ -64,4 +64,7 @@
     <string name="create_page">Create Page</string>
     <string name="loading_more">Loading more...</string>
     <string name="not_found">Sorry, there is no any page match the words you entered. however, you can create this page.</string>
+    <string name="redirect_from">Redirected from </string>
+    <string name="search_header_page_exist">There is a page named "%1$s" on CalcWiki</string>
+    <string name="search_header_page_not_exist_but_createable">Create a page named "%1$s" on CalcWiki now !</string>
 </resources>

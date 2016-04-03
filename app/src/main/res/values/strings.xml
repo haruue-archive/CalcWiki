@@ -64,4 +64,7 @@
     <string name="create_page">创建页面</string>
     <string name="loading_more">加载更多…</string>
     <string name="not_found">在计算器百科上找不到您需要的条目，欢迎您贡献此条目</string>
+    <string name="redirect_from">重定向自 </string>
+    <string name="search_header_page_exist">计算器百科上有名为“%1$s”的页面</string>
+    <string name="search_header_page_not_exist_but_createable">在计算器百科上新建名为“%1$s”的页面！</string>
 </resources>
