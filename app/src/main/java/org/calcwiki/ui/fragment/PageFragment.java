@@ -1,11 +1,14 @@
 package org.calcwiki.ui.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import com.jude.utils.JUtils;
 
@@ -15,6 +18,7 @@ import org.calcwiki.data.network.helper.PageApiHelper;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentPage;
 import org.calcwiki.ui.activity.MainActivity;
+import org.calcwiki.ui.client.MediaWikiWebViewClient;
 
 /**
  * @author Haruue Icymoon haruue@caoyue.com.cn
@@ -25,6 +29,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     boolean isRedirect;
     String defaultProp = "id|text|sections|lastmodifiedby|revision|editable|languagecount|hasvariants|displaytitle|description|contentmodel";
     WebView pageView;
+    ProgressBar progressBar;
 
     public String getPageName() {
         return isRedirect ? pageName : pageName + "#NO_REDIRECT";
@@ -47,8 +52,11 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
         ((MainActivity) getActivity()).setTitle(pageName);
 //        PageApiHelper.getPage(pageName, isRedirect, defaultProp, new Listener());
-        PageApiHelper.getPageHtml(pageName, new Listener());
         pageView = (WebView) view.findViewById(R.id.page_view);
+        pageView.setWebViewClient(new MediaWikiWebViewClient());
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar_in_page);
+        showProgress();
+        PageApiHelper.getPageHtml(pageName, new Listener());
         refreshHeader();
         return view;
     }
@@ -59,6 +67,12 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 
     public void reloadPage() {
         pageView.loadDataWithBaseURL("https://calcwiki.org/", CurrentPage.getInstance().getHtmlData(), "text/html", "UTF-8", null);
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showPage();
+            }
+        }, 300);
     }
 
     public void refreshOptionButton() {
@@ -112,6 +126,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 
         @Override
         public void onGetPageHtmlSuccess(String pageHtml) {
+            progressBar.stopNestedScroll();
             CurrentPage.getInstance().storageHtmlData(pageHtml);
             reloadPage();
         }
@@ -120,5 +135,15 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         public void onGetPageHtmlFailure(int reason) {
 
         }
+    }
+
+    public void showProgress() {
+        pageView.setVisibility(View.GONE);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void showPage() {
+        progressBar.setVisibility(View.GONE);
+        pageView.setVisibility(View.VISIBLE);
     }
 }
