@@ -9,7 +9,6 @@ import org.calcwiki.ui.activity.MainActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.regex.Pattern;
 
 /**
@@ -30,7 +29,7 @@ public class MediaWikiWebViewClient extends WebViewClient {
             // 获取页面标题
             String newPageName;
             int start;
-            if (Pattern.matches("title=", url)) {
+            if (Pattern.matches(".*title=.*", url)) {
                 start = url.indexOf("title=") + 6;
             } else {
                 start = url.indexOf("calcwiki.org/") + 13;
@@ -45,6 +44,11 @@ public class MediaWikiWebViewClient extends WebViewClient {
             }
             if (newPageName.isEmpty()) {
                 newPageName = "计算器百科:首页";
+            }
+            // 检查特殊页面
+            if (Pattern.matches("^Special:", newPageName) || Pattern.matches("^特殊:", newPageName)) {
+                // TODO: 完成特殊页面处理
+                return true;
             }
             // 检查重定向状态
             if (Pattern.matches("redirect=no", url)) {
