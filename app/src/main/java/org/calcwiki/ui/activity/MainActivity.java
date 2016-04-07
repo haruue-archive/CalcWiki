@@ -28,6 +28,7 @@ import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.drawer.MainDrawer;
 import org.calcwiki.ui.fragment.PageFragment;
 import org.calcwiki.ui.fragment.SearchFragment;
+import org.calcwiki.ui.item.MainDrawerHeader;
 import org.calcwiki.ui.util.CurrentStateStorager;
 
 public class MainActivity extends AppCompatActivity implements CurrentUserChangeCaller.CurrentUserChangeListener {
@@ -181,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     @Override
     protected void onResume() {
         super.onResume();
-        if (MainDrawer.getInstance() != null) {
-            MainDrawer.getInstance().checkLogin();
+        if (MainDrawerHeader.getInstance() != null) {
+            MainDrawerHeader.getInstance().refresh();
         }
     }
 

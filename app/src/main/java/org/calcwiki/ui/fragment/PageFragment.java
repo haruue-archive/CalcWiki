@@ -20,6 +20,7 @@ import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentPage;
 import org.calcwiki.ui.activity.MainActivity;
 import org.calcwiki.ui.client.MediaWikiWebViewClient;
+import org.calcwiki.ui.util.PageHtmlUtils;
 
 /**
  * @author Haruue Icymoon haruue@caoyue.com.cn
@@ -68,7 +69,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void reloadPage() {
-        pageView.loadDataWithBaseURL("https://calcwiki.org/", CurrentPage.getInstance().getHtmlData(), "text/html", "UTF-8", null);
+        pageView.loadDataWithBaseURL("https://calcwiki.org/", PageHtmlUtils.noTocTitle(CurrentPage.getInstance().getHtmlData()), "text/html", "UTF-8", null);
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
