@@ -3,6 +3,7 @@ package org.calcwiki.data.network.helper;
 import com.alibaba.fastjson.JSON;
 
 import org.calcwiki.data.model.MobileViewModel;
+import org.calcwiki.data.model.ParseModel;
 import org.calcwiki.data.network.api.RestApi;
 
 import rx.Observer;
@@ -18,7 +19,7 @@ import rx.schedulers.Schedulers;
 public class PageApiHelper {
 
     public interface GetPageApiHelperListener {
-        void onGetPageSuccess(MobileViewModel.Page pageDate);
+        void onGetPageSuccess(ParseModel.Page pageDate);
 
         void onGetPageFailure(int reason);
     }
@@ -29,9 +30,14 @@ public class PageApiHelper {
         public final static int PAGE_NOT_EXIST = 4;
     }
 
-    public static void getPage(String pageName, boolean isRedirect, String prop, final GetPageApiHelperListener listener) {
-
-        RestApi.getCalcWikiApiService().getPage(pageName, isRedirect ? "yes" : "no", prop)
+    public static void getPage(String pageName, boolean isRedirect, final GetPageApiHelperListener listener) {
+        String redirect;
+        if (isRedirect) {
+            redirect = "true";
+        } else {
+            redirect = "";
+        }
+        RestApi.getCalcWikiApiService().getPage(pageName, redirect)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
@@ -48,12 +54,12 @@ public class PageApiHelper {
 
                     @Override
                     public void onNext(String s) {
-                        MobileViewModel.Page pageData = JSON.parseObject(s, MobileViewModel.Page.class);
-                        if (pageData != null && pageData.mobileview != null) {
-                            listener.onGetPageSuccess(pageData);
+                        ParseModel.Page page = JSON.parseObject(s, ParseModel.Page.class);
+                        if (page != null && page.parse != null && page.parse.text != null) {
+                            listener.onGetPageSuccess(page);
                             return;
                         }
-                        MobileViewModel.Error error = JSON.parseObject(s, MobileViewModel.Error.class);
+                        ParseModel.Error error = JSON.parseObject(s, ParseModel.Error.class);
                         if (error != null && error.error != null && error.error.code.equals("missingtitle")) {
                             listener.onGetPageFailure(GetPageFailureReason.PAGE_NOT_EXIST);
                             return;
@@ -61,7 +67,6 @@ public class PageApiHelper {
                         listener.onGetPageFailure(GetPageFailureReason.SERVER_ERROR);
                     }
                 });
-
     }
 
     public interface CheckPageExistApiHelperListener {

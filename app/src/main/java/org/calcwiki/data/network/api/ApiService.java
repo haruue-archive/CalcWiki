@@ -30,9 +30,9 @@ public interface ApiService {
     @FormUrlEncoded
     Observable<String> search(@Field("srsearch") String srsearch, @Field("srwhat") String srwhat, @Field("sroffset") String sroffset);
 
-    @POST("https://calcwiki.org/api.php?action=mobileview&sections=0-|references&noheadings=true&notransform=true")
+    @POST("https://calcwiki.org/api.php?action=parse&prop=headhtml|text|sections|revid|displaytitle&mobileformat=true&mainpage=true")
     @FormUrlEncoded
-    Observable<String> getPage(@Field("page") String pageName, @Field("redirect") String isRedirect, @Field("prop") String prop);
+    Observable<String> getPage(@Field("page") String pageName, @Field("redirect") String isRedirect);
 
     @POST("https://calcwiki.org/api.php?action=mobileview&sections=-1&maxlen=1&onlyrequestedsections=true")
     @FormUrlEncoded

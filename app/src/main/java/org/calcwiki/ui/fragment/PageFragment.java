@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
-import org.calcwiki.data.model.MobileViewModel;
+import org.calcwiki.data.model.ParseModel;
 import org.calcwiki.data.network.helper.PageApiHelper;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentPage;
@@ -29,7 +29,6 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 
     String pageName;
     boolean isRedirect;
-    String defaultProp = "id|text|sections|lastmodifiedby|revision|editable|languagecount|hasvariants|displaytitle|description|contentmodel";
     WebView pageView;
     ProgressBar progressBar;
 
@@ -56,10 +55,13 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 //        PageApiHelper.getPage(pageName, isRedirect, defaultProp, new Listener());
         pageView = (WebView) view.findViewById(R.id.page_view);
         pageView.setWebViewClient(new MediaWikiWebViewClient());
+        pageView.getSettings().setDisplayZoomControls(false);
         pageView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        pageView.getSettings().setUseWideViewPort(false);
+        pageView.getSettings().setLoadWithOverviewMode(false);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar_in_page);
         showProgress();
-        PageApiHelper.getPageHtml(pageName, new Listener());
+        PageApiHelper.getPage(pageName, isRedirect, new Listener());
         refreshHeader();
         return view;
     }
@@ -69,7 +71,9 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void reloadPage() {
-        pageView.loadDataWithBaseURL("https://calcwiki.org/", PageHtmlUtils.noTocTitle(CurrentPage.getInstance().getHtmlData()), "text/html", "UTF-8", null);
+        String head = CurrentPage.getInstance().pageData.parse.headhtml.content;
+        String body = CurrentPage.getInstance().pageData.parse.text.content;
+        pageView.loadDataWithBaseURL("https://calcwiki.org/", PageHtmlUtils.combinePageHtml(head, body), "text/html", "UTF-8", null);
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -79,7 +83,8 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void refreshOptionButton() {
-        int status;
+        //TODO: refactor these code
+/*        int status;
         if (CurrentPage.getInstance().page.mobileview.editable) {
             status = MainActivity.OptionsMenuButtons.ACTION_SEARCH | MainActivity.OptionsMenuButtons.ACTION_EDIT | MainActivity.OptionsMenuButtons.ACTION_MOVE | MainActivity.OptionsMenuButtons.ACTION_HISTORY;
         } else {
@@ -89,33 +94,10 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
             ((MainActivity) getActivity()).setOptionsMenuStatus(status);
         } catch (Exception ignored) {
 
-        }
+        }*/
     }
 
-    public class Listener implements PageApiHelper.GetPageApiHelperListener, View.OnClickListener, PageApiHelper.GetPageHtmlApiHelperListener {
-
-        @Override
-        public void onGetPageSuccess(MobileViewModel.Page pageDate) {
-            CurrentPage.getInstance().storagePage(pageDate);
-            refreshHeader();
-            refreshOptionButton();
-            reloadPage();
-        }
-
-        @Override
-        public void onGetPageFailure(int reason) {
-            switch (reason) {
-                case PageApiHelper.GetPageFailureReason.NETWORK_ERROR:
-                    JUtils.Toast(getResources().getString(R.string.no_network));
-                    break;
-                case PageApiHelper.GetPageFailureReason.PAGE_NOT_EXIST:
-                    break;
-                case PageApiHelper.GetPageFailureReason.SERVER_ERROR:
-                    JUtils.Toast(getResources().getString(R.string.server_exception_and_try_again));
-                    break;
-            }
-
-        }
+    public class Listener implements View.OnClickListener, PageApiHelper.GetPageApiHelperListener {
 
         @Override
         public void onClick(View v) {
@@ -128,15 +110,24 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         }
 
         @Override
-        public void onGetPageHtmlSuccess(String pageHtml) {
+        public void onGetPageSuccess(ParseModel.Page pageDate) {
+            CurrentPage.getInstance().storagePage(pageDate);
             progressBar.stopNestedScroll();
-            CurrentPage.getInstance().storageHtmlData(pageHtml);
             reloadPage();
         }
 
         @Override
-        public void onGetPageHtmlFailure(int reason) {
-
+        public void onGetPageFailure(int reason) {
+            switch (reason) {
+                case PageApiHelper.GetPageFailureReason.NETWORK_ERROR:
+                    JUtils.Toast(getResources().getString(R.string.please_cleck_network));
+                    break;
+                case PageApiHelper.GetPageFailureReason.SERVER_ERROR:
+                    JUtils.Toast(getResources().getString(R.string.server_exception_and_try_again));
+                    break;
+                case PageApiHelper.GetPageFailureReason.PAGE_NOT_EXIST:
+                    break;
+            }
         }
     }
 
@@ -148,5 +139,17 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     public void showPage() {
         progressBar.setVisibility(View.GONE);
         pageView.setVisibility(View.VISIBLE);
+    }
+
+    public void showNormalHeader() {
+
+    }
+
+    public void showRedirectHeader() {
+
+    }
+
+    public void showNoSuchPageHeader() {
+
     }
 }

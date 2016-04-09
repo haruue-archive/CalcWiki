@@ -6,7 +6,11 @@ package org.calcwiki.ui.util;
 public class PageHtmlUtils {
 
     public static String noTocTitle(String origHtml) {
-        return origHtml.replaceAll("^<div id=\"toc\" class=\"toc\">$", "<div id=\"toc\" class=\"toc\" style=\"display: none;\">");
+        return origHtml.replace("<div id=\"toc\" class=\"toc\">", "<div id=\"toc\" class=\"toc\" style=\"display: none;\">");
+    }
+
+    public static String combinePageHtml(String head, String body) {
+        return head + body + "</body>" + "</html>";
     }
 
 }

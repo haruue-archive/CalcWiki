@@ -42,6 +42,9 @@ public class MediaWikiWebViewClient extends WebViewClient {
             } else {
                     newPageName = url.substring(start, end);
             }
+            // 处理 MediaWiki URL 空格转义
+            newPageName = newPageName.replaceAll("_", " ");
+            // 判断 https://calcwiki.org 或者 https://calcwiki.org/index.php 这种页面
             if (newPageName.isEmpty()) {
                 newPageName = "计算器百科:首页";
             }
@@ -50,7 +53,7 @@ public class MediaWikiWebViewClient extends WebViewClient {
                 // TODO: 完成特殊页面处理
                 return true;
             }
-            // 检查重定向状态
+            // 检查重定向状态并在新的 Fragment 里打开
             if (Pattern.matches("redirect=no", url)) {
                 ((MainActivity) view.getContext()).showPageWithoutRedirect(newPageName);
             } else {
@@ -61,5 +64,10 @@ public class MediaWikiWebViewClient extends WebViewClient {
             view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         }
         return true;
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        view.loadUrl("javascript:document.body.style.margin=\"8%\"; void 0");
     }
 }

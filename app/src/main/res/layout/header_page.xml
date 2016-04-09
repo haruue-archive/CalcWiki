@@ -43,6 +43,7 @@
 
     </LinearLayout>
 
+<!-- 暂时不启用，打算在右边添加目录抽屉
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,5 +51,6 @@
         android:text="@string/touch_title_to_expand_content"
         android:textColor="@color/gray_700"
         android:textSize="14sp"/>
+-->
 
 </LinearLayout>
