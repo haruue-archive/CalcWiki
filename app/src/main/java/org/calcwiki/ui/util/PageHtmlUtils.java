@@ -1,5 +1,7 @@
 package org.calcwiki.ui.util;
 
+import com.jude.utils.JUtils;
+
 /**
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */

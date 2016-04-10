@@ -2,8 +2,11 @@ package org.calcwiki.ui.client;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.jude.utils.JUtils;
 
 import org.calcwiki.ui.activity.MainActivity;
 
@@ -38,9 +41,9 @@ public class MediaWikiWebViewClient extends WebViewClient {
             if (start == -1) {
                 newPageName = "计算器百科:首页";
             } else if (end == -1) {
-                    newPageName = url.substring(start);
+                newPageName = url.substring(start);
             } else {
-                    newPageName = url.substring(start, end);
+                newPageName = url.substring(start, end);
             }
             // 处理 MediaWiki URL 空格转义
             newPageName = newPageName.replaceAll("_", " ");
@@ -66,8 +69,24 @@ public class MediaWikiWebViewClient extends WebViewClient {
         return true;
     }
 
+
+    // 在这里加入手机端 JavaScript
+    public final static String mobileJavaScript =
+            // 页面左右 padding
+            "$('body').css('padding-left', '3%');" +
+                    "$('body').css('padding-right', '3%');" +
+                    // 宽 InfoBox
+                    "$('.infoBox').css('width', '90%');" +
+                    // 半隐黑幕
+                    "$('.heimu').css('background-color', '#aaaaaa');" +
+                    // 不要把列表显示成三列表格
+                    "$('li').css('width', '100%');" +
+                    // 首页列表处理
+                    "$('.all-page-div-in-main-page').css('width', '100%');";
+
+
     @Override
     public void onPageFinished(WebView view, String url) {
-        view.loadUrl("javascript:document.body.style.margin=\"8%\"; void 0");
+        view.evaluateJavascript(mobileJavaScript, null);
     }
 }

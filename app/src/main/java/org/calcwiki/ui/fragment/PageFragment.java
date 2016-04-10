@@ -1,5 +1,6 @@
 package org.calcwiki.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,6 +48,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,9 +58,10 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         pageView = (WebView) view.findViewById(R.id.page_view);
         pageView.setWebViewClient(new MediaWikiWebViewClient());
         pageView.getSettings().setDisplayZoomControls(false);
-        pageView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+        pageView.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
         pageView.getSettings().setUseWideViewPort(false);
         pageView.getSettings().setLoadWithOverviewMode(false);
+        pageView.getSettings().setJavaScriptEnabled(true);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar_in_page);
         showProgress();
         PageApiHelper.getPage(pageName, isRedirect, new Listener());
