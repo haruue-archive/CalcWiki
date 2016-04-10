@@ -10,13 +10,13 @@ public class TokenModel {
 
     /**
      * batchcomplete :
-     * query : {"tokens":{"csrftoken":"cfd92a947f3a75ed84fe191a2584dc9b56f692d6+\\","patroltoken":"05dbacd29f71540da38e2134618efdf256f692d6+\\","rollbacktoken":"6e6370d61daa17e194c9b7da9212aa9056f692d6+\\","userrightstoken":"b46ccb2333adf6cf952db42ccb8681d856f692d6+\\","watchtoken":"0715e7b1f0598bc10cc3b4a9995c2c2956f692d6+\\"}}
+     * query : {"tokens":{"csrftoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","patroltoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","rollbacktoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","userrightstoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","watchtoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\"}}
      */
 
     @JSONField(name = "batchcomplete")
     public String batchcomplete;
     /**
-     * tokens : {"csrftoken":"cfd92a947f3a75ed84fe191a2584dc9b56f692d6+\\","patroltoken":"05dbacd29f71540da38e2134618efdf256f692d6+\\","rollbacktoken":"6e6370d61daa17e194c9b7da9212aa9056f692d6+\\","userrightstoken":"b46ccb2333adf6cf952db42ccb8681d856f692d6+\\","watchtoken":"0715e7b1f0598bc10cc3b4a9995c2c2956f692d6+\\"}
+     * tokens : {"csrftoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","patroltoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","rollbacktoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","userrightstoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\","watchtoken":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\\"}
      */
 
     @JSONField(name = "query")
@@ -24,11 +24,11 @@ public class TokenModel {
 
     public static class QueryEntity {
         /**
-         * csrftoken : cfd92a947f3a75ed84fe191a2584dc9b56f692d6+\
-         * patroltoken : 05dbacd29f71540da38e2134618efdf256f692d6+\
-         * rollbacktoken : 6e6370d61daa17e194c9b7da9212aa9056f692d6+\
-         * userrightstoken : b46ccb2333adf6cf952db42ccb8681d856f692d6+\
-         * watchtoken : 0715e7b1f0598bc10cc3b4a9995c2c2956f692d6+\
+         * csrftoken : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\
+         * patroltoken : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\
+         * rollbacktoken : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\
+         * userrightstoken : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\
+         * watchtoken : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx+\
          */
 
         @JSONField(name = "tokens")

@@ -1,9 +1,6 @@
 package org.calcwiki.data.storage;
 
-import org.calcwiki.data.model.MobileViewModel;
 import org.calcwiki.data.model.ParseModel;
-import org.calcwiki.ui.util.HighLight;
-import org.calcwiki.util.Utils;
 
 import java.io.Serializable;
 

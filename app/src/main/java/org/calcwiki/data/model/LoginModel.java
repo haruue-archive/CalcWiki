@@ -14,7 +14,7 @@ public class LoginModel {
          * result : Success
          * lguserid : 9
          * lgusername : 春上冰月
-         * lgtoken : 8ba2cb9cd8f2e3d609d9e52906020eda
+         * lgtoken : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
          * cookieprefix : my_wiki_cw_
          * sessionid : 5oc4ls0phovgclc32udf1vstt5
          */
@@ -42,7 +42,7 @@ public class LoginModel {
 
         /**
          * result : NeedToken
-         * token : 87197f2475188e552f7a7d0ea1777b0b
+         * token : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
          * cookieprefix : my_wiki_cw_
          * sessionid : 5oc4ls0phovgclc32udf1vstt5
          */

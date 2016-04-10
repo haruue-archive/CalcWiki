@@ -1,15 +1,9 @@
 package org.calcwiki.util;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Handler;
-import android.util.Log;
 
 import com.jude.utils.JUtils;
-
-import org.calcwiki.R;
-import org.calcwiki.data.storage.CurrentUser;
-import org.calcwiki.ui.drawer.MainDrawer;
 
 import cn.com.caoyue.util.time.Time;
 import rx.Observable;
@@ -17,7 +11,6 @@ import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class Utils {

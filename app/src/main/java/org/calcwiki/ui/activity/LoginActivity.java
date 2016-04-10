@@ -3,14 +3,12 @@ package org.calcwiki.ui.activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gc.materialdesign.views.ButtonRectangle;
 import com.jude.utils.JUtils;
@@ -18,15 +16,10 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import org.calcwiki.BuildConfig;
 import org.calcwiki.R;
-import org.calcwiki.data.network.api.ApiService;
 import org.calcwiki.data.network.helper.LoginApiHelper;
 import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentLogin;
-import org.calcwiki.data.storage.CurrentUser;
-import org.calcwiki.ui.drawer.MainDrawer;
 import org.calcwiki.ui.util.CurrentStateStorager;
-
-import java.io.Serializable;
 
 public class LoginActivity extends AppCompatActivity {
 

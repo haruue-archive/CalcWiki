@@ -11,7 +11,7 @@ public class RegisterModel {
 
         /**
          * result : NeedToken
-         * token : 387bc54bd0ec29333178800ce4213306
+         * token : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
          */
 
         @JSONField(name = "createaccount")
@@ -29,7 +29,7 @@ public class RegisterModel {
 
         /**
          * result : Success
-         * token : 387bc54bd0ec29333178800ce4213306
+         * token : xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
          * userid : 1234
          * username : GymBeauWhales
          */

@@ -17,6 +17,7 @@ import org.calcwiki.ui.dialog.LogoutDialog;
 import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
 
 /**
+ * Drawer 的头部视图
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {

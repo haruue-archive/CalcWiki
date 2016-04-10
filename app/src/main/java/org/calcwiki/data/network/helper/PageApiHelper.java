@@ -147,43 +147,4 @@ public class PageApiHelper {
                 });
     }
 
-    public interface GetPageHtmlApiHelperListener {
-        void onGetPageHtmlSuccess(String pageHtml);
-        void onGetPageHtmlFailure(int reason);
-    }
-
-    public class GetPageHtmlFailureReason {
-        public final static int NETWORK_ERROR = 1;
-        public final static int SERVER_ERROR = 2;
-        public final static int PAGE_NOT_EXIST = 4;
-    }
-
-    public static void getPageHtml(String title, final GetPageHtmlApiHelperListener listener) {
-        RestApi.getCalcWikiApiService().getPageHtml(title)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        listener.onGetPageHtmlFailure(GetPageHtmlFailureReason.NETWORK_ERROR);
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        if (s.equals("<div class=\"noarticletext mw-content-ltr\" dir=\"ltr\" lang=\"zh\">\n" +
-                                "<p>本页面目前没有内容。你可以在其他页面中<a href=\"https://calcwiki.org/Special:%E6%90%9C%E7%B4%A2/Afjldkfjadl\" title=\"Special:搜索/Afjldkfjadl\">搜索本页标题</a>或<span class=\"plainlinks\"><a rel=\"nofollow\" class=\"external text\" href=\"https://calcwiki.org/index.php?title=Special:%E6%97%A5%E5%BF%97&amp;page=Afjldkfjadl\">搜索相关日志</a></span>，但你没有权限创建本页面。\n" +
-                                "</p>\n" +
-                                "</div>\n")) {
-                            listener.onGetPageHtmlFailure(GetPageHtmlFailureReason.PAGE_NOT_EXIST);
-                        } else {
-                            listener.onGetPageHtmlSuccess(s);
-                        }
-                    }
-                });
-    }
 }

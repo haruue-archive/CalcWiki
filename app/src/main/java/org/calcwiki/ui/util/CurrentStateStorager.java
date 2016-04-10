@@ -25,10 +25,15 @@ import java.io.Serializable;
     }
 
  }
- * 每个被存储的对象都采取单例模式，并实现方法 {@code
+ * 每个被存储的对象都采取单例模式，并且 implements {@link Serializable} ，并实现方法 {@code
 
-    public static {@link Serializable} getInstance();
-    public static void restoreInstance({@link Serializable} instance);
+    public static {@link Serializable} getInstance() {
+        // 在这里返回单例
+    }
+
+    public static void restoreInstance({@link Serializable} instance) {
+        // 在这里将 instance 恢复到当前单例
+    }
 
 }
  * @author Haruue Icymoon haruue@caoyue.com.cn

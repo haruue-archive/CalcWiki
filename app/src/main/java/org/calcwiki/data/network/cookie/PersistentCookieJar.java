@@ -4,7 +4,6 @@ import com.jude.utils.JFileManager;
 
 import org.calcwiki.App;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

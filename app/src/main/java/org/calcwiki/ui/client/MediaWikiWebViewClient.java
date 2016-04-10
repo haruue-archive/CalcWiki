@@ -2,11 +2,8 @@ package org.calcwiki.ui.client;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import com.jude.utils.JUtils;
 
 import org.calcwiki.ui.activity.MainActivity;
 
