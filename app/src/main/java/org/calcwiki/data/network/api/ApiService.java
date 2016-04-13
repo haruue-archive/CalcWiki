@@ -42,4 +42,8 @@ public interface ApiService {
     @FormUrlEncoded
     Observable<String> getPageSource(@Field("title") String title);
 
+    @POST("api.php?action=query&prop=info&inprop=protection|talkid|watched|watchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle")
+    @FormUrlEncoded
+    Observable<String> getPageInfo(@Field("titles") String title, @Field("redirects") String redirects);
+
 }

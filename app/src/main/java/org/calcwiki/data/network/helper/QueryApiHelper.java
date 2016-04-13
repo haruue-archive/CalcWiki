@@ -7,6 +7,7 @@ import org.calcwiki.data.network.api.RestApi;
 import org.calcwiki.data.storage.CurrentUser;
 
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -40,13 +41,52 @@ public class QueryApiHelper {
 
                     @Override
                     public void onError(Throwable e) {
-
+                        e.printStackTrace();
                     }
 
                     @Override
                     public void onNext(String s) {
                         CurrentUser.getInstance().setBaseUserInfo(JSON.parseObject(s, QueryModel.UserInfo.class).query.userinfo);
                         listener.onGetBaseUserInfo();
+                    }
+                });
+    }
+
+    public interface GetPageInfoApiHelperListener {
+        void onGetPageInfoSuccess(QueryModel.PageInfo pageInfo);
+        void onGetPageInfoFailure(int reason);
+    }
+
+    public class GetPageInfoFailureReason {
+        public final static int NETWORK_ERROR = 1;
+        public final static int SERVER_ERROR = 2;
+    }
+
+    public static void getPageInfo(String title, boolean isRedirect, final GetPageInfoApiHelperListener listener) {
+        RestApi.getCalcWikiApiService().getPageInfo(title, isRedirect ? "true" : "")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        listener.onGetPageInfoFailure(GetPageInfoFailureReason.NETWORK_ERROR);
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        // replace page id key to 'content'
+                        s = s.replaceAll("\"-?[0-9]+\": \\{", "\"content\": {");
+                        QueryModel.PageInfo pageInfo = JSON.parseObject(s, QueryModel.PageInfo.class);
+                        if (pageInfo != null && pageInfo.query != null && pageInfo.query.pages != null && pageInfo.query.pages.content != null) {
+                            listener.onGetPageInfoSuccess(pageInfo);
+                            return;
+                        }
+                        listener.onGetPageInfoFailure(GetPageInfoFailureReason.SERVER_ERROR);
                     }
                 });
     }
