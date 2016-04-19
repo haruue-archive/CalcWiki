@@ -5,6 +5,9 @@ import android.os.Handler;
 
 import com.jude.utils.JUtils;
 
+import java.io.IOException;
+import java.util.Locale;
+
 import cn.com.caoyue.util.time.Time;
 import rx.Observable;
 import rx.Observer;
@@ -12,6 +15,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import taobe.tec.jcc.JChineseConvertor;
 
 public class Utils {
 
@@ -20,6 +24,7 @@ public class Utils {
 
     /**
      * 在 App 类中初始化工具
+     *
      * @param context App 类实例
      */
     public static void init(Context context) {
@@ -29,6 +34,7 @@ public class Utils {
 
     /**
      * 获取本机 IP 地址，请勿在主线程调用
+     *
      * @return 本机 IP 地址
      */
     public static String getIP() {
@@ -72,6 +78,7 @@ public class Utils {
 
     /**
      * 将 ISO 8601 时间戳转换为 Haruue 时间工具
+     *
      * @param iso8601time ISO 8601 时间戳
      * @return 时间工具实例
      * @see <a href="http://haruue.github.io/Time_Class_Util/">http://haruue.github.io/Time_Class_Util/</a>
@@ -82,6 +89,7 @@ public class Utils {
 
     /**
      * 获取 Application
+     *
      * @return Application 类的实例
      */
     public static Context getApplication() {
@@ -96,4 +104,24 @@ public class Utils {
         new Thread(runnable).start();
     }
 
+    /**
+     * 简繁转换
+     * @param text 需要转换的文本
+     * @return 转换完成的文本
+     */
+    public static String zhVariantConvert(String text) {
+        Locale locale = Locale.getDefault();
+        if (locale.getLanguage().equals("zh")) {
+            try {
+                if (locale.getCountry().equals("CN") || locale.getCountry().equals("SG")) {
+                    text = JChineseConvertor.getInstance().t2s(text);
+                } else {
+                    text = JChineseConvertor.getInstance().s2t(text);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return text;
+    }
 }
