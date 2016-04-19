@@ -43,6 +43,24 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/no_such_page_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/textview_no_such_page_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tool:text="本页面目前没有内容。你可以在其他页面中搜索本页标题、搜索相关日志或编辑本页面。"
+            android:textSize="20sp"
+            android:textColor="@color/gray_900"/>
+
+    </LinearLayout>
+
 <!-- 暂时不启用，打算在右边添加目录抽屉
     <TextView
         android:layout_width="wrap_content"

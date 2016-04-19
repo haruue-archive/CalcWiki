@@ -5,21 +5,20 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ProgressBar;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
-import org.calcwiki.data.model.ParseModel;
-import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.controller.PageCacheController;
-import org.calcwiki.data.network.helper.PageApiHelper;
-import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentPage;
 import org.calcwiki.ui.activity.MainActivity;
@@ -34,7 +33,9 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     String pageName;
     boolean isRedirect;
     WebView pageView;
-    ProgressBar progressBar;
+    FrameLayout headerLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
+    Listener listener;
 
     public String getPageName() {
         return isRedirect ? pageName : pageName + "#NO_REDIRECT";
@@ -57,7 +58,12 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
         ((MainActivity) getActivity()).setTitle(pageName);
-//        PageApiHelper.getPage(pageName, isRedirect, defaultProp, new Listener());
+        listener = new Listener();
+        // Initialize base
+        headerLayout = (FrameLayout) view.findViewById(R.id.header);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout_in_page);
+        swipeRefreshLayout.setOnRefreshListener(listener);
+        // Initialize page
         pageView = (WebView) view.findViewById(R.id.page_view);
         pageView.setWebViewClient(new MediaWikiWebViewClient());
         pageView.getSettings().setDisplayZoomControls(false);
@@ -65,9 +71,8 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         pageView.getSettings().setUseWideViewPort(false);
         pageView.getSettings().setLoadWithOverviewMode(false);
         pageView.getSettings().setJavaScriptEnabled(true);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar_in_page);
         showProgress();
-        PageCacheController.getInstance().loadPage(pageName, isRedirect, new Listener());
+        PageCacheController.getInstance().loadPage(pageName, isRedirect, listener);
         return view;
     }
 
@@ -102,7 +107,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         }*/
     }
 
-    public class Listener implements View.OnClickListener, PageCacheController.PageCacheControllerListener {
+    public class Listener implements View.OnClickListener, PageCacheController.PageCacheControllerListener, SwipeRefreshLayout.OnRefreshListener {
 
         @Override
         public void onClick(View v) {
@@ -121,6 +126,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 
         @Override
         public void onLoadFailure(int reason) {
+            swipeRefreshLayout.setRefreshing(false);
             switch (reason) {
                 case PageCacheController.PageCacheControllerFailedReason.NETWORK_ERROR:
                     JUtils.Toast(getResources().getString(R.string.please_cleck_network));
@@ -143,20 +149,30 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
                     break;
             }
         }
+
+        @Override
+        public void onRefresh() {
+            PageCacheController.getInstance().loadPageFromNetwork(pageName, isRedirect, this);
+        }
     }
 
     public void showProgress() {
+        swipeRefreshLayout.setRefreshing(true);
         pageView.setVisibility(View.GONE);
-        progressBar.setVisibility(View.VISIBLE);
     }
 
     public void showPage() {
-        progressBar.setVisibility(View.GONE);
+        swipeRefreshLayout.setRefreshing(false);
+        showNormalHeader();
         pageView.setVisibility(View.VISIBLE);
     }
 
     public void showNormalHeader() {
-
+        if (pageName.equals("计算器百科:首页")) return;   // Don't show header for main page
+        headerLayout.removeAllViews();
+        View header = View.inflate(getActivity(), R.layout.header_page, null);
+        ((TextView) header.findViewById(R.id.page_title)).setText(CurrentPage.getInstance().pageData.parse.displaytitle);
+        headerLayout.addView(header);
     }
 
     public void showRedirectHeader() {
@@ -164,10 +180,18 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void showNoSuchPageHeader() {
-
+        headerLayout.removeAllViews();
+        View header = View.inflate(getActivity(), R.layout.header_page, null);
+        header.findViewById(R.id.no_such_page_info).setVisibility(View.VISIBLE);
+        ((TextView) header.findViewById(R.id.page_title)).setText(pageName);
+        ((TextView) header.findViewById(R.id.textview_no_such_page_info)).setText(Html.fromHtml(getResources().getString(R.string.tip_no_such_page)));
+        headerLayout.addView(header);
     }
 
     public void showExceptionHeader(String errorMessage) {
-
+        headerLayout.removeAllViews();
+        View header = View.inflate(getActivity(), R.layout.header_exception, null);
+        ((TextView) header.findViewById(R.id.textview_exception)).setText(errorMessage);
+        headerLayout.addView(header);
     }
 }

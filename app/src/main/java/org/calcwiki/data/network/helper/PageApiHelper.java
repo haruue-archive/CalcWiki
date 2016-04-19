@@ -33,9 +33,9 @@ public class PageApiHelper {
     public static void getPage(String pageName, boolean isRedirect, final GetPageApiHelperListener listener) {
         String redirect;
         if (isRedirect) {
-            redirect = "true";
-        } else {
             redirect = "";
+        } else {
+            redirect = "no";
         }
         RestApi.getCalcWikiApiService().getPage(pageName, redirect)
                 .subscribeOn(Schedulers.io())

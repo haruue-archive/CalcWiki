@@ -64,7 +64,7 @@ public class QueryApiHelper {
     }
 
     public static void getPageInfo(String title, boolean isRedirect, final GetPageInfoApiHelperListener listener) {
-        RestApi.getCalcWikiApiService().getPageInfo(title, isRedirect ? "true" : "")
+        RestApi.getCalcWikiApiService().getPageInfo(title, isRedirect ? "" : "no")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<String>() {

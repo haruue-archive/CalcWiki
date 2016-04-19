@@ -69,4 +69,5 @@
     <string name="search_header_page_not_exist_but_createable">在计算器百科上新建名为“%1$s”的页面！</string>
     <string name="touch_title_to_expand_content">触摸每一小节的标题来展开本小节内容</string>
     <string name="tip_io_exception">发生 I/O 异常，您可能需要手动清理本地缓存，然后再试一次</string>
+    <string name="tip_no_such_page">本页面目前没有内容。您可以<font color="#0645AD">立即创建它</font>。</string>
 </resources>
