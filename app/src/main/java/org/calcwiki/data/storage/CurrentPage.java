@@ -1,6 +1,10 @@
 package org.calcwiki.data.storage;
 
+import com.bumptech.glide.util.Util;
+
 import org.calcwiki.data.model.ParseModel;
+import org.calcwiki.data.model.QueryModel;
+import org.calcwiki.util.Utils;
 
 import java.io.Serializable;
 
@@ -12,6 +16,10 @@ public class CurrentPage implements Serializable {
     public static CurrentPage currentPage;
 
     public ParseModel.Page pageData;
+
+    public QueryModel.PageInfo pageInfo;
+
+    public long refreshTime;
 
     public static void clear() {
         currentPage.pageData = null;
@@ -29,8 +37,17 @@ public class CurrentPage implements Serializable {
         currentPage = (CurrentPage) instance;
     }
 
-    public void storagePage(ParseModel.Page pageData) {
-        this.pageData = pageData;
+    public static void setCurrentPageFromCache(CurrentPage currentPage) {
+        CurrentPage.currentPage = currentPage;
     }
 
+    public void storagePage(ParseModel.Page pageData) {
+        this.pageData = pageData;
+        this.refreshTime = Utils.getCurrentTimeStamp();
+    }
+
+    public void storagePageInfo(QueryModel.PageInfo pageInfo) {
+        this.pageInfo = pageInfo;
+        this.refreshTime = Utils.getCurrentTimeStamp();
+    }
 }

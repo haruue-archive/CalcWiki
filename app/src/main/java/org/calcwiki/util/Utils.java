@@ -124,4 +124,12 @@ public class Utils {
         }
         return text;
     }
+
+    /**
+     * 获取当前时间戳
+     * @return 获取当前时间戳
+     */
+    public static long getCurrentTimeStamp() {
+        return System.currentTimeMillis() / 1000;
+    }
 }

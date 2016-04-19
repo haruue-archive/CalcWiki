@@ -16,7 +16,10 @@ import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
 import org.calcwiki.data.model.ParseModel;
+import org.calcwiki.data.model.QueryModel;
+import org.calcwiki.data.network.controller.PageCacheController;
 import org.calcwiki.data.network.helper.PageApiHelper;
+import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentPage;
 import org.calcwiki.ui.activity.MainActivity;
@@ -64,8 +67,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         pageView.getSettings().setJavaScriptEnabled(true);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar_in_page);
         showProgress();
-        PageApiHelper.getPage(pageName, isRedirect, new Listener());
-        refreshHeader();
+        PageCacheController.getInstance().loadPage(pageName, isRedirect, new Listener());
         return view;
     }
 
@@ -100,7 +102,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         }*/
     }
 
-    public class Listener implements View.OnClickListener, PageApiHelper.GetPageApiHelperListener {
+    public class Listener implements View.OnClickListener, PageCacheController.PageCacheControllerListener {
 
         @Override
         public void onClick(View v) {
@@ -113,22 +115,31 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         }
 
         @Override
-        public void onGetPageSuccess(ParseModel.Page pageDate) {
-            CurrentPage.getInstance().storagePage(pageDate);
-            progressBar.stopNestedScroll();
+        public void onLoadSuccess() {
             reloadPage();
         }
 
         @Override
-        public void onGetPageFailure(int reason) {
+        public void onLoadFailure(int reason) {
             switch (reason) {
-                case PageApiHelper.GetPageFailureReason.NETWORK_ERROR:
+                case PageCacheController.PageCacheControllerFailedReason.NETWORK_ERROR:
                     JUtils.Toast(getResources().getString(R.string.please_cleck_network));
+                    showExceptionHeader(getResources().getString(R.string.please_cleck_network));
                     break;
-                case PageApiHelper.GetPageFailureReason.SERVER_ERROR:
+                case PageCacheController.PageCacheControllerFailedReason.SERVER_ERROR:
                     JUtils.Toast(getResources().getString(R.string.server_exception_and_try_again));
+                    showExceptionHeader(getResources().getString(R.string.server_exception_and_try_again));
                     break;
-                case PageApiHelper.GetPageFailureReason.PAGE_NOT_EXIST:
+                case PageCacheController.PageCacheControllerFailedReason.PAGE_NOT_EXIST:
+                    showNoSuchPageHeader();
+                    break;
+                case PageCacheController.PageCacheControllerFailedReason.IO_EXCEPTION:
+                    JUtils.Toast(getResources().getString(R.string.tip_io_exception));
+                    showExceptionHeader(getResources().getString(R.string.tip_io_exception));
+                    break;
+                case PageCacheController.PageCacheControllerFailedReason.UNKNOW_EXCEPTION:
+                    JUtils.Toast(getResources().getString(R.string.unexpected_error_please_try_again));
+                    showExceptionHeader(getResources().getString(R.string.unexpected_error_please_try_again));
                     break;
             }
         }
@@ -153,6 +164,10 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void showNoSuchPageHeader() {
+
+    }
+
+    public void showExceptionHeader(String errorMessage) {
 
     }
 }

@@ -8,12 +8,13 @@ import com.jude.utils.JFileManager;
 import com.jude.utils.JUtils;
 
 import org.calcwiki.data.network.api.RestApi;
+import org.calcwiki.data.network.controller.PageCacheController;
 import org.calcwiki.util.Utils;
 
 public class App extends Application {
 
     public enum ObjectStorageDirs {
-        Cookie,
+        Cookie, Page
     }
 
     @Override
@@ -28,6 +29,7 @@ public class App extends Application {
         JFileManager.getInstance().init(this, ObjectStorageDirs.values());
         // Initialize API
         RestApi.init();
-
+        // Initialize Controller
+        PageCacheController.initialize();
     }
 }

@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,6 +61,13 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         adapter.setMore(R.layout.view_more, new Listener());
         adapter.setOnItemClickListener(new Listener());
         resultRecyclerView.setRefreshListener(new Listener());
+        resultRecyclerView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                ((MainActivity) getActivity()).listener.onKey(v, keyCode, event);
+                return true;
+            }
+        });
         // Begin load first page
         resultRecyclerView.showProgress();
         SearchApiHelper.search(keyWord, 0, new Listener());

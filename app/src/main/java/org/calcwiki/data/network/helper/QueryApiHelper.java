@@ -1,6 +1,7 @@
 package org.calcwiki.data.network.helper;
 
 import com.alibaba.fastjson.JSON;
+import com.jude.utils.JUtils;
 
 import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.api.RestApi;
@@ -80,7 +81,7 @@ public class QueryApiHelper {
                     @Override
                     public void onNext(String s) {
                         // replace page id key to 'content'
-                        s = s.replaceAll("\"-?[0-9]+\": \\{", "\"content\": {");
+                        s = s.replaceAll("\"-?[0-9]+\":\\{", "\"content\":{");
                         QueryModel.PageInfo pageInfo = JSON.parseObject(s, QueryModel.PageInfo.class);
                         if (pageInfo != null && pageInfo.query != null && pageInfo.query.pages != null && pageInfo.query.pages.content != null) {
                             listener.onGetPageInfoSuccess(pageInfo);

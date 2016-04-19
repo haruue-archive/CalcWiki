@@ -3,7 +3,6 @@ package org.calcwiki.ui.activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -39,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     MainDrawer mainDrawer;
     EditText searchEditText;
     InputMethodManager inputMethodManager;
-    Handler handler;
+    public Listener listener = new Listener();
     int currentOptionsMenuStatus = -1;
 
     public class OptionsMenuButtons {
@@ -60,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         JUtils.setDebug(BuildConfig.DEBUG, this.getClass().getName());
         initializeToolbarAndDrawer(R.id.toolbar, R.id.drawer_main_in_main);
         inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        // Initialize Handler
-        handler = new Handler(getMainLooper());
         showPage("计算器百科:首页");
     }
 
@@ -76,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mainDrawer.setToggle(this, toolbar);
         mainDrawer.setCloseIMEOnDrawerStateChange(this);
-        toolbar.setOnMenuItemClickListener(new Listener());
+        toolbar.setOnMenuItemClickListener(listener);
         // Initialize widget in toolbar
         searchEditText = (EditText) findViewById(R.id.edittext_search_in_toolbar);
         hideSearchBar();
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
                 }
             }
         });
-        searchEditText.setOnKeyListener(new Listener());
+        searchEditText.setOnKeyListener(listener);
         CurrentUserChangeCaller.getInstance().addCurrentUserListener(this);
     }
 
