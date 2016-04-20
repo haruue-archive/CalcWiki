@@ -32,6 +32,7 @@ public class PageCacheController {
         public final static int PAGE_NOT_EXIST = 4;
         public final static int IO_EXCEPTION = 8;
         public final static int UNKNOW_EXCEPTION = 16;
+        public final static int PERMISSION_DENIED = 32;
     }
 
     private PageCacheController() {
@@ -132,6 +133,10 @@ public class PageCacheController {
         @Override
         public void onGetPageInfoSuccess(QueryModel.PageInfo pageInfo) {
             CurrentPage.getInstance().storagePageInfo(pageInfo);
+            if (pageInfo.query.pages.content.readable == null) {
+                controllerListener.onLoadFailure(PageCacheControllerFailedReason.PERMISSION_DENIED);
+                return;
+            }
             flagGetInfoSuccess = true;
             checkSuccess();
         }

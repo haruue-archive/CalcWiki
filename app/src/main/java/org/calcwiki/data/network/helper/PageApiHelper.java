@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 
 import org.calcwiki.data.model.MobileViewModel;
 import org.calcwiki.data.model.ParseModel;
+import org.calcwiki.data.network.api.MediaWikiInterceptor;
 import org.calcwiki.data.network.api.RestApi;
 
 import rx.Observer;
@@ -31,13 +32,8 @@ public class PageApiHelper {
     }
 
     public static void getPage(String pageName, boolean isRedirect, final GetPageApiHelperListener listener) {
-        String redirect;
-        if (isRedirect) {
-            redirect = "";
-        } else {
-            redirect = "no";
-        }
-        RestApi.getCalcWikiApiService().getPage(pageName, redirect)
+        MediaWikiInterceptor.getInstance().setIsRedirect(isRedirect);
+        RestApi.getCalcWikiApiService().getPage(pageName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {

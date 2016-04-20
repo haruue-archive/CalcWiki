@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.jude.utils.JUtils;
 
 import org.calcwiki.data.model.QueryModel;
+import org.calcwiki.data.network.api.MediaWikiInterceptor;
 import org.calcwiki.data.network.api.RestApi;
 import org.calcwiki.data.storage.CurrentUser;
 
@@ -64,7 +65,8 @@ public class QueryApiHelper {
     }
 
     public static void getPageInfo(String title, boolean isRedirect, final GetPageInfoApiHelperListener listener) {
-        RestApi.getCalcWikiApiService().getPageInfo(title, isRedirect ? "" : "no")
+        MediaWikiInterceptor.getInstance().setIsRedirect(isRedirect);
+        RestApi.getCalcWikiApiService().getPageInfo(title)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<String>() {

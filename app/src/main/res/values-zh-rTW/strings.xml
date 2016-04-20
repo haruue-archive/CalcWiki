@@ -70,4 +70,5 @@
     <string name="touch_title_to_expand_content">觸摸每一小節的小題來展開本小節的內容</string>
     <string name="tip_io_exception">發生存取異常，您可能需要手動清理緩存空間，然後重試</string>
     <string name="tip_no_such_page"><![CDATA[本頁面目前沒有內容。您可以立即<font color="#0645AD">創建它</font>。]]></string>
+    <string name="permission_denied">你沒有本頁面的訪問權限</string>
 </resources>

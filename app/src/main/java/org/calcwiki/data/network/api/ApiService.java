@@ -32,7 +32,7 @@ public interface ApiService {
 
     @POST("api.php?action=parse&prop=headhtml|text|sections|revid|displaytitle&mobileformat=true&mainpage=true")
     @FormUrlEncoded
-    Observable<String> getPage(@Field("page") String pageName, @Field("redirect") String isRedirect);
+    Observable<String> getPage(@Field("page") String pageName);
 
     @POST("api.php?action=mobileview&sections=-1&maxlen=1&onlyrequestedsections=true")
     @FormUrlEncoded
@@ -44,6 +44,6 @@ public interface ApiService {
 
     @POST("api.php?action=query&prop=info&inprop=protection|talkid|watched|watchers|notificationtimestamp|subjectid|url|readable|preload|displaytitle")
     @FormUrlEncoded
-    Observable<String> getPageInfo(@Field("titles") String title, @Field("redirects") String redirects);
+    Observable<String> getPageInfo(@Field("titles") String title);
 
 }

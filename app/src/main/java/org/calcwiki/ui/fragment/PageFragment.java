@@ -153,6 +153,10 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
                     JUtils.Toast(getResources().getString(R.string.unexpected_error_please_try_again));
                     showExceptionHeader(getResources().getString(R.string.unexpected_error_please_try_again));
                     break;
+                case PageCacheController.PageCacheControllerFailedReason.PERMISSION_DENIED:
+                    JUtils.Toast(getResources().getString(R.string.permission_denied));
+                    showExceptionHeader(getResources().getString(R.string.permission_denied));
+                    break;
             }
         }
 
@@ -208,6 +212,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     public void showExceptionHeader(String errorMessage) {
         headerLayout.removeAllViews();
         View header = View.inflate(getActivity(), R.layout.header_exception, null);
+        ((TextView) header.findViewById(R.id.page_title)).setText(pageName);
         ((TextView) header.findViewById(R.id.textview_exception)).setText(errorMessage);
         headerLayout.addView(header);
     }

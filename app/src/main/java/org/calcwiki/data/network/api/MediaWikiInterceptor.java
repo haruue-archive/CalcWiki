@@ -46,6 +46,7 @@ public class MediaWikiInterceptor implements Interceptor {
             if (token != null) newFormBodyBuilder.add("token", token);
             if (captchaid != null) newFormBodyBuilder.add("captchaid", captchaid);
             if (captchaword != null) newFormBodyBuilder.add("captchaword", captchaword);
+            if (isRedirect) newFormBodyBuilder.add("redirects" , "true");
 
             requestBuilder.method(originRequest.method(), newFormBodyBuilder.build());
         }
@@ -94,4 +95,11 @@ public class MediaWikiInterceptor implements Interceptor {
         captchaid = null;
         captchaword = null;
     }
+
+    public boolean isRedirect;
+
+    public void setIsRedirect(boolean isRedirect) {
+        this.isRedirect = isRedirect;
+    }
+
 }
