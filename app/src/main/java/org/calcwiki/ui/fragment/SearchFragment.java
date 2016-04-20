@@ -1,6 +1,5 @@
 package org.calcwiki.ui.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -42,6 +41,8 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
     SearchResultListAdapter adapter;
     ArrayList<SearchModel.Result.QueryEntity.SearchEntity> results = new ArrayList<SearchModel.Result.QueryEntity.SearchEntity>(0);
     int nextOffset = 0;
+    boolean hasDestoryView;
+    Listener listener = new Listener();
 
     @Override
     public void initialize(String keyWord) {
@@ -58,9 +59,9 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         resultRecyclerView.setAdapter(adapter);
         resultRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter.setNoMore(R.layout.view_no_more);
-        adapter.setMore(R.layout.view_more, new Listener());
-        adapter.setOnItemClickListener(new Listener());
-        resultRecyclerView.setRefreshListener(new Listener());
+        adapter.setMore(R.layout.view_more, listener);
+        adapter.setOnItemClickListener(listener);
+        resultRecyclerView.setRefreshListener(listener);
         resultRecyclerView.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -70,8 +71,8 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
         });
         // Begin load first page
         resultRecyclerView.showProgress();
-        SearchApiHelper.search(keyWord, 0, new Listener());
-        PageApiHelper.checkPageExistState(keyWord, new Listener());
+        PageApiHelper.checkPageExistState(keyWord, listener);
+        SearchApiHelper.search(keyWord, 0, listener);
         // Toolbar
         ((MainActivity) getActivity()).setOptionsMenuStatus(MainActivity.OptionsMenuButtons.ACTION_SEARCH);
         return view;
@@ -102,6 +103,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
 
         @Override
         public void onSearchResult(List<SearchModel.Result.QueryEntity.SearchEntity> result, int nextOffset) {
+            if (hasDestoryView) return;
             SearchFragment.this.results.addAll(result);
             adapter.addAll(result);
             SearchFragment.this.nextOffset = nextOffset;
@@ -114,6 +116,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
 
         @Override
         public void onSearchFailure(int reason) {
+            if (hasDestoryView) return;
             switch (reason) {
                 case SearchApiHelper.SearchFailureReason.EMPTY_RESULT:
                     resultRecyclerView.showRecycler();
@@ -139,12 +142,13 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
             if (nextOffset == -1) {
                 adapter.stopMore();
             } else {
-                SearchApiHelper.search(keyWord, nextOffset, new Listener());
+                SearchApiHelper.search(keyWord, nextOffset, listener);
             }
         }
 
         @Override
         public void onGetPageExistState(final boolean isPageExist) {
+            if (hasDestoryView) return;
             adapter.addHeader(new RecyclerArrayAdapter.ItemView() {
                 @Override
                 public View onCreateView(ViewGroup parent) {
@@ -180,8 +184,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
 
                 }
             });
-            adapter.getHeader(0);
-            adapter.notifyDataSetChanged();
+            adapter.notifyItemInserted(0);
         }
 
         @Override
@@ -191,6 +194,7 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
 
         @Override
         public void onItemClick(int position) {
+            ((MainActivity) getActivity()).hideSearchBar();
             ((MainActivity) getActivity()).showPage(adapter.getItem(position).title);
         }
 
@@ -203,5 +207,11 @@ public class SearchFragment extends CurrentFragment.InitializibleFragment {
             SearchApiHelper.search(keyWord, 0, this);
             PageApiHelper.checkPageExistState(keyWord, this);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        hasDestoryView = true;
     }
 }

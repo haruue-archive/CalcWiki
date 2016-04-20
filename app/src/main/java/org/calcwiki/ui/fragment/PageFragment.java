@@ -36,6 +36,8 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     FrameLayout headerLayout;
     SwipeRefreshLayout swipeRefreshLayout;
     Listener listener;
+    boolean hasDestoryView;
+    Handler handler = new Handler(Looper.getMainLooper());
 
     public String getPageName() {
         return isRedirect ? pageName : pageName + "#NO_REDIRECT";
@@ -72,7 +74,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         pageView.getSettings().setLoadWithOverviewMode(false);
         pageView.getSettings().setJavaScriptEnabled(true);
         showProgress();
-        PageCacheController.getInstance().loadPage(pageName, isRedirect, listener);
+        listener.onRefresh();
         return view;
     }
 
@@ -84,12 +86,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         String head = CurrentPage.getInstance().pageData.parse.headhtml.content;
         String body = CurrentPage.getInstance().pageData.parse.text.content;
         pageView.loadDataWithBaseURL("https://calcwiki.org/", PageHtmlUtils.combinePageHtml(head, body), "text/html", "UTF-8", null);
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showPage();
-            }
-        }, 300);
+        showPage();
     }
 
     public void refreshOptionButton() {
@@ -115,17 +112,22 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
                 case R.id.redirect_title:
                     ((MainActivity) getActivity()).showPageWithoutRedirect(pageName);
                     break;
+                case R.id.textview_no_such_page_info:
+                    ((MainActivity) getActivity()).createPage(pageName);
+                    break;
             }
 
         }
 
         @Override
         public void onLoadSuccess() {
+            if (hasDestoryView) return;
             reloadPage();
         }
 
         @Override
         public void onLoadFailure(int reason) {
+            if (hasDestoryView) return;
             swipeRefreshLayout.setRefreshing(false);
             switch (reason) {
                 case PageCacheController.PageCacheControllerFailedReason.NETWORK_ERROR:
@@ -157,14 +159,23 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void showProgress() {
-        swipeRefreshLayout.setRefreshing(true);
-        pageView.setVisibility(View.GONE);
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(true);
+            }
+        });
     }
 
     public void showPage() {
-        swipeRefreshLayout.setRefreshing(false);
         showNormalHeader();
         pageView.setVisibility(View.VISIBLE);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }, 1200);
     }
 
     public void showNormalHeader() {
@@ -184,7 +195,9 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         View header = View.inflate(getActivity(), R.layout.header_page, null);
         header.findViewById(R.id.no_such_page_info).setVisibility(View.VISIBLE);
         ((TextView) header.findViewById(R.id.page_title)).setText(pageName);
-        ((TextView) header.findViewById(R.id.textview_no_such_page_info)).setText(Html.fromHtml(getResources().getString(R.string.tip_no_such_page)));
+        TextView noSuchPageTip = (TextView) header.findViewById(R.id.textview_no_such_page_info);
+        noSuchPageTip.setText(Html.fromHtml(getResources().getString(R.string.tip_no_such_page)));
+        noSuchPageTip.setOnClickListener(listener);
         headerLayout.addView(header);
     }
 
@@ -193,5 +206,11 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         View header = View.inflate(getActivity(), R.layout.header_exception, null);
         ((TextView) header.findViewById(R.id.textview_exception)).setText(errorMessage);
         headerLayout.addView(header);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        hasDestoryView = true;
     }
 }

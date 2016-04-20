@@ -29,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     ButtonRectangle loginButton;
     TextView forgetPasswordButton;
     ButtonRectangle registerButton;
+    Listener listener = new Listener();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +59,9 @@ public class LoginActivity extends AppCompatActivity {
         forgetPasswordButton = (TextView) findViewById(R.id.button_forget_password);
         registerButton = (ButtonRectangle) findViewById(R.id.button_register);
         // Initialize Buttons Listener
-        loginButton.setOnClickListener(new Listener());
-        registerButton.setOnClickListener(new Listener());
-        forgetPasswordButton.setOnClickListener(new Listener());
+        loginButton.setOnClickListener(listener);
+        registerButton.setOnClickListener(listener);
+        forgetPasswordButton.setOnClickListener(listener);
     }
 
     private class Listener implements View.OnClickListener, LoginApiHelper.LoginApiHelperListener, QueryApiHelper.OnGetBaseUserInfoListener {

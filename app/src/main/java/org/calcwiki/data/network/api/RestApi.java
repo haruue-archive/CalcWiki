@@ -3,6 +3,8 @@ package org.calcwiki.data.network.api;
 import org.calcwiki.data.network.converter.StringConverterFactory;
 import org.calcwiki.data.network.cookie.PersistentCookieJar;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -22,6 +24,9 @@ public class RestApi {
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .addInterceptor(MediaWikiInterceptor.getInstance())
+                .readTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
                 .build();
 
         Retrofit retrofitBuilderForCalcWikiApi = new Retrofit.Builder()

@@ -139,8 +139,11 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             switch (v.getId()) {
                 case R.id.edittext_search_in_toolbar:
-                    doSearch();
-                    return true;
+                    if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                        doSearch();
+                        return true;
+                    }
+                    break;
             }
             return false;
         }
