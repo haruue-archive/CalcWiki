@@ -24,9 +24,9 @@ public class RestApi {
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .addInterceptor(MediaWikiInterceptor.getInstance())
-                .readTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
                 .build();
 
         Retrofit retrofitBuilderForCalcWikiApi = new Retrofit.Builder()

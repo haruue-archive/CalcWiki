@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jude.utils.JUtils;
@@ -35,6 +36,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     WebView pageView;
     FrameLayout headerLayout;
     SwipeRefreshLayout swipeRefreshLayout;
+    RelativeLayout pageContent;
     Listener listener;
     boolean hasDestoryView;
     Handler handler = new Handler(Looper.getMainLooper());
@@ -65,6 +67,8 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         headerLayout = (FrameLayout) view.findViewById(R.id.header);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout_in_page);
         swipeRefreshLayout.setOnRefreshListener(listener);
+        pageContent = (RelativeLayout) view.findViewById(R.id.page_content);
+        pageContent.setVisibility(View.VISIBLE);
         // Initialize page
         pageView = (WebView) view.findViewById(R.id.page_view);
         pageView.setWebViewClient(new MediaWikiWebViewClient());
@@ -211,6 +215,8 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        swipeRefreshLayout.setRefreshing(false);
+        pageContent.setVisibility(View.GONE);
         hasDestoryView = true;
     }
 }

@@ -6,7 +6,7 @@ import org.calcwiki.ui.fragment.PageFragment;
 import org.calcwiki.ui.fragment.SearchFragment;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * 存储当前 Fragment 信息，用于返回键回退等等
@@ -36,7 +36,7 @@ public class CurrentFragment implements Serializable {
         currentFragment = (CurrentFragment) instance;
     }
 
-    public ArrayList<FragmentInfo> infoList = new ArrayList<FragmentInfo>(0);
+    public Stack<FragmentInfo> infoStack = new Stack<FragmentInfo>();
 
     public int currentIndex = -1;
 
@@ -63,10 +63,7 @@ public class CurrentFragment implements Serializable {
     }
 
     public void push(InitializibleFragment fragment) {
-        for (int i = currentIndex + 1; i < infoList.size(); i++) {
-            infoList.remove(i);
-        }
-        if (currentIndex >= 0 && infoList.get(currentIndex).tag.equals(fragment.getTag())) {  // avoid add the same fragment in the same time
+        if (!infoStack.empty() && infoStack.peek().tag.equals(fragment.getTag())) {  // avoid add the same fragment in the same time
             return;
         }
         FragmentInfo info = new FragmentInfo();
@@ -74,12 +71,12 @@ public class CurrentFragment implements Serializable {
         if (fragment instanceof SearchFragment) {
             info.kind = SEARCH_FRAGMENT;
             info.extString = ((SearchFragment) fragment).getKeyWord();
-            infoList.add(info);
+            infoStack.push(info);
             currentIndex++;
         } else if (fragment instanceof PageFragment) {
             info.kind = PAGE_FRAGMENT;
             info.extString = ((PageFragment) fragment).getPageName();
-            infoList.add(info);
+            infoStack.push(info);
             currentIndex++;
         } else {
             throw new IllegalArgumentException("Please add to CurrentFragment before you storage its info");
@@ -88,51 +85,19 @@ public class CurrentFragment implements Serializable {
 
     public FragmentInfo getCurrentFragmentInfo() {
         try {
-            return infoList.get(currentIndex);
+            return infoStack.peek();
         } catch (Throwable t) {
             return null;
         }
     }
 
     public FragmentInfo getPrevFragmentInfo() {
-        try {
-            currentIndex--;
-            return infoList.get(currentIndex);
-        } catch (Throwable t) {
-            currentIndex++;
-            return null;
-        }
-    }
-
-    public FragmentInfo getNextFragmentInfo() {
-        try {
-            currentIndex++;
-            return infoList.get(currentIndex);
-        } catch (Throwable t) {
-            currentIndex--;
-            return null;
-        }
+        infoStack.pop();
+        return infoStack.peek();
     }
 
     public boolean hasPrev() {
-        try {
-            if (infoList.get(currentIndex - 1) != null) {
-                return true;
-            }
-        } catch (Throwable t) {
-            return false;
-        }
-        return false;
+        return !(infoStack.empty() || infoStack.size() == 1);
     }
 
-    public boolean hasNext() {
-        try {
-            if (infoList.get(currentIndex + 1) != null) {
-                return true;
-            }
-        } catch (Throwable t) {
-            return false;
-        }
-        return false;
-    }
 }
