@@ -49,8 +49,14 @@ public class MediaWikiWebViewClient extends WebViewClient {
                 newPageName = "计算器百科:首页";
             }
             // 检查特殊页面
+            // TODO: 需要另外处理的页面
+            // Special: 特殊页面
+            // Category: 分类页面（直接 purge 并不会显示分类包含的页面）
+            // redlink=1 创建页面
+            // action=edit 在没有 redlink 的情况下是编辑现有页面
+            // action=history 查看页面历史
+            // diff= 对比页面历史
             if (Pattern.matches("^Special:", newPageName) || Pattern.matches("^特殊:", newPageName)) {
-                // TODO: 完成特殊页面处理
                 return true;
             }
             // 检查重定向状态并在新的 Fragment 里打开
