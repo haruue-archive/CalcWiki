@@ -22,11 +22,15 @@ import org.calcwiki.R;
 import org.calcwiki.data.network.controller.PageCacheController;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentPage;
+import org.calcwiki.data.storage.CurrentUser;
+import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.activity.MainActivity;
 import org.calcwiki.ui.client.MediaWikiWebViewClient;
 import org.calcwiki.ui.util.PageHtmlUtils;
 
 /**
+ * 查看页面 Fragment
+ * 只能放入 {@link MainActivity}
  * @author Haruue Icymoon haruue@caoyue.com.cn
  */
 public class PageFragment extends CurrentFragment.InitializibleFragment {
@@ -38,7 +42,9 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     SwipeRefreshLayout swipeRefreshLayout;
     RelativeLayout pageContent;
     Listener listener;
-    boolean hasDestoryView;
+    boolean hasDestroyView;
+    boolean hasGetPage;
+    int getPageFailureReason;
     Handler handler = new Handler(Looper.getMainLooper());
 
     public String getPageName() {
@@ -69,6 +75,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         swipeRefreshLayout.setOnRefreshListener(listener);
         pageContent = (RelativeLayout) view.findViewById(R.id.page_content);
         pageContent.setVisibility(View.VISIBLE);
+        CurrentUserChangeCaller.getInstance().addCurrentUserListener(listener);
         // Initialize page
         pageView = (WebView) view.findViewById(R.id.page_view);
         pageView.setWebViewClient(new MediaWikiWebViewClient());
@@ -82,10 +89,6 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         return view;
     }
 
-    public void refreshHeader() {
-
-    }
-
     public void reloadPage() {
         String head = CurrentPage.getInstance().pageData.parse.headhtml.content;
         String body = CurrentPage.getInstance().pageData.parse.text.content;
@@ -93,22 +96,33 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         showPage();
     }
 
-    public void refreshOptionButton() {
-        //TODO: refactor these code
-/*        int status;
-        if (CurrentPage.getInstance().page.mobileview.editable) {
-            status = MainActivity.OptionsMenuButtons.ACTION_SEARCH | MainActivity.OptionsMenuButtons.ACTION_EDIT | MainActivity.OptionsMenuButtons.ACTION_MOVE | MainActivity.OptionsMenuButtons.ACTION_HISTORY;
+    public void refreshOptionButtonOnGetPageSuccess() {
+        JUtils.Log("pagepermission", "edit: " + CurrentPage.getInstance().getEditable() + "; move: " + CurrentPage.getInstance().getMoveable());
+        int state = MainActivity.OptionsMenuButtons.ACTION_SEARCH | MainActivity.OptionsMenuButtons.ACTION_HISTORY;
+        // Check edit
+        if (CurrentPage.getInstance().getEditable()) {
+            state |= MainActivity.OptionsMenuButtons.ACTION_EDIT;
         } else {
-            status = MainActivity.OptionsMenuButtons.ACTION_SEARCH | MainActivity.OptionsMenuButtons.ACTION_VIEW_SOURCE | MainActivity.OptionsMenuButtons.ACTION_HISTORY;
+            state |= MainActivity.OptionsMenuButtons.ACTION_VIEW_SOURCE;
         }
-        try {
-            ((MainActivity) getActivity()).setOptionsMenuStatus(status);
-        } catch (Exception ignored) {
-
-        }*/
+        if (CurrentPage.getInstance().getMoveable()) {
+            state |= MainActivity.OptionsMenuButtons.ACTION_MOVE;
+        }
+        if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.SYSOP) != 0) {
+            state |= MainActivity.OptionsMenuButtons.ACTION_DELETE;
+        }
+        ((MainActivity) getActivity()).setOptionsMenuStatus(state);
     }
 
-    public class Listener implements View.OnClickListener, PageCacheController.PageCacheControllerListener, SwipeRefreshLayout.OnRefreshListener {
+    public void refreshOptionButtonOnGetPageFailure() {
+        int state = MainActivity.OptionsMenuButtons.ACTION_SEARCH;
+        if (getPageFailureReason == PageCacheController.PageCacheControllerFailedReason.PAGE_NOT_EXIST && CurrentUser.getInstance().isLogin) {
+            state |= MainActivity.OptionsMenuButtons.ACTION_CREATE;
+        }
+        ((MainActivity) getActivity()).setOptionsMenuStatus(state);
+    }
+
+    public class Listener implements View.OnClickListener, PageCacheController.PageCacheControllerListener, SwipeRefreshLayout.OnRefreshListener, CurrentUserChangeCaller.CurrentUserChangeListener {
 
         @Override
         public void onClick(View v) {
@@ -119,20 +133,29 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
                 case R.id.textview_no_such_page_info:
                     ((MainActivity) getActivity()).createPage(pageName);
                     break;
+                case R.id.redirect_info:
+                    ((MainActivity) getActivity()).showPageWithoutRedirect(CurrentPage.currentPage.pageData.parse.redirects.get(0).from);
+                    break;
             }
 
         }
 
         @Override
         public void onLoadSuccess() {
-            if (hasDestoryView) return;
+            if (hasDestroyView) return;
+            hasGetPage = true;
+            getPageFailureReason = 0;
             reloadPage();
+            refreshOptionButtonOnGetPageSuccess();
         }
 
         @Override
         public void onLoadFailure(int reason) {
-            if (hasDestoryView) return;
+            if (hasDestroyView) return;
+            hasGetPage = false;
+            getPageFailureReason = reason;
             swipeRefreshLayout.setRefreshing(false);
+            refreshOptionButtonOnGetPageFailure();
             switch (reason) {
                 case PageCacheController.PageCacheControllerFailedReason.NETWORK_ERROR:
                     JUtils.Toast(getResources().getString(R.string.please_cleck_network));
@@ -149,7 +172,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
                     JUtils.Toast(getResources().getString(R.string.tip_io_exception));
                     showExceptionHeader(getResources().getString(R.string.tip_io_exception));
                     break;
-                case PageCacheController.PageCacheControllerFailedReason.UNKNOW_EXCEPTION:
+                case PageCacheController.PageCacheControllerFailedReason.UNKNOWN_EXCEPTION:
                     JUtils.Toast(getResources().getString(R.string.unexpected_error_please_try_again));
                     showExceptionHeader(getResources().getString(R.string.unexpected_error_please_try_again));
                     break;
@@ -162,7 +185,18 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 
         @Override
         public void onRefresh() {
+            hasGetPage = false;
+            getPageFailureReason = 0;
             PageCacheController.getInstance().loadPageFromNetwork(pageName, isRedirect, this);
+        }
+
+        @Override
+        public void onCurrentUserChange() {
+            if (hasGetPage) {
+                refreshOptionButtonOnGetPageSuccess();
+            } else {
+                refreshOptionButtonOnGetPageFailure();
+            }
         }
     }
 
@@ -176,7 +210,11 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
     }
 
     public void showPage() {
-        showNormalHeader();
+        if (CurrentPage.getInstance().pageData.parse.redirects == null || CurrentPage.getInstance().pageData.parse.redirects.isEmpty()) {
+            showNormalHeader();
+        } else {
+            showRedirectHeader();
+        }
         pageView.setVisibility(View.VISIBLE);
         handler.postDelayed(new Runnable() {
             @Override
@@ -191,11 +229,21 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         headerLayout.removeAllViews();
         View header = View.inflate(getActivity(), R.layout.header_page, null);
         ((TextView) header.findViewById(R.id.page_title)).setText(CurrentPage.getInstance().pageData.parse.displaytitle);
+        ((MainActivity) getActivity()).setTitle(CurrentPage.getInstance().pageData.parse.displaytitle);
         headerLayout.addView(header);
     }
 
     public void showRedirectHeader() {
-
+        if (pageName.equals("计算器百科:首页")) return;   // Don't show header for main page
+        headerLayout.removeAllViews();
+        View header = View.inflate(getActivity(), R.layout.header_page, null);
+        ((TextView) header.findViewById(R.id.page_title)).setText(CurrentPage.getInstance().pageData.parse.displaytitle);
+        // display redirect info
+        View redirectInfo = header.findViewById(R.id.redirect_info);
+        redirectInfo.setVisibility(View.VISIBLE);
+        ((TextView) redirectInfo.findViewById(R.id.redirect_title)).setText(CurrentPage.getInstance().pageData.parse.redirects.get(0).from);
+        redirectInfo.setOnClickListener(listener);
+        headerLayout.addView(header);
     }
 
     public void showNoSuchPageHeader() {
@@ -222,6 +270,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         super.onDestroyView();
         swipeRefreshLayout.setRefreshing(false);
         pageContent.setVisibility(View.GONE);
-        hasDestoryView = true;
+        hasDestroyView = true;
+        CurrentUserChangeCaller.getInstance().removeCurrentUserListener(listener);
     }
 }

@@ -50,4 +50,45 @@ public class CurrentPage implements Serializable {
         this.pageInfo = pageInfo;
         this.refreshTime = Utils.getCurrentTimeStamp();
     }
+
+    public boolean getEditable() {
+        if (!CurrentUser.getInstance().isLogin) {
+            return false;
+        }
+        if (pageInfo.query.pages.content.protection == null || pageInfo.query.pages.content.protection.isEmpty()) {
+            return true;
+        }
+        for (QueryModel.PageInfo.QueryEntity.PagesEntity.NumEntity.ProtectionEntity i: pageInfo.query.pages.content.protection) {
+            if (i.type.equals("edit")) {
+                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.AUTOCONFIRMED) != 0 && i.level.equals("autoconfirmed")) {
+                    return true;
+                }
+                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.SYSOP) != 0 && (i.level.equals("autoconfirmed") || i.level.equals("sysop"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean getMoveable() {
+        if (!CurrentUser.getInstance().isLogin) {
+            return false;
+        }
+        if (pageInfo.query.pages.content.protection == null || pageInfo.query.pages.content.protection.isEmpty()) {
+            return true;
+        }
+        for (QueryModel.PageInfo.QueryEntity.PagesEntity.NumEntity.ProtectionEntity i: pageInfo.query.pages.content.protection) {
+            if (i.type.equals("move")) {
+                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.AUTOCONFIRMED) != 0 && i.level.equals("autoconfirmed")) {
+                    return true;
+                }
+                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.SYSOP) != 0 && (i.level.equals("autoconfirmed") || i.level.equals("sysop"))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

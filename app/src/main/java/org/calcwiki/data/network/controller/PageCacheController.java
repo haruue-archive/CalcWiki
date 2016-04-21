@@ -9,7 +9,10 @@ import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.helper.PageApiHelper;
 import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentPage;
+import org.calcwiki.util.Sha1;
 import org.calcwiki.util.Utils;
+
+import java.security.NoSuchAlgorithmException;
 
 /**
  * 提供本地页面缓存支持，如果本地找不到或者已过期再联网加载
@@ -31,7 +34,7 @@ public class PageCacheController {
         public final static int SERVER_ERROR = 2;
         public final static int PAGE_NOT_EXIST = 4;
         public final static int IO_EXCEPTION = 8;
-        public final static int UNKNOW_EXCEPTION = 16;
+        public final static int UNKNOWN_EXCEPTION = 16;
         public final static int PERMISSION_DENIED = 32;
     }
 
@@ -81,11 +84,19 @@ public class PageCacheController {
     }
 
     private CurrentPage doLoadFromCache(String pageName) {
-        return (CurrentPage) folder.readObjectFromFile(hashPageName(pageName));
+        try {
+            return (CurrentPage) folder.readObjectFromFile(hashPageName(pageName));
+        } catch (NoSuchAlgorithmException e) {
+            return null;
+        }
     }
 
     private void doSavePageToCache(CurrentPage currentPage) {
-        folder.writeObjectToFile(currentPage, hashPageName(currentPage.pageData.parse.title));
+        try {
+            folder.writeObjectToFile(currentPage, hashPageName(currentPage.pageData.parse.title));
+        } catch (NoSuchAlgorithmException ignored) {
+
+        }
     }
 
     private class Listener implements PageApiHelper.GetPageApiHelperListener, QueryApiHelper.GetPageInfoApiHelperListener {
@@ -125,7 +136,7 @@ public class PageCacheController {
                     controllerListener.onLoadFailure(PageCacheControllerFailedReason.PAGE_NOT_EXIST);
                     break;
                 default:
-                    controllerListener.onLoadFailure(PageCacheControllerFailedReason.UNKNOW_EXCEPTION);
+                    controllerListener.onLoadFailure(PageCacheControllerFailedReason.UNKNOWN_EXCEPTION);
                     break;
             }
         }
@@ -151,14 +162,14 @@ public class PageCacheController {
                     controllerListener.onLoadFailure(PageCacheControllerFailedReason.SERVER_ERROR);
                     break;
                 default:
-                    controllerListener.onLoadFailure(PageCacheControllerFailedReason.UNKNOW_EXCEPTION);
+                    controllerListener.onLoadFailure(PageCacheControllerFailedReason.UNKNOWN_EXCEPTION);
                     break;
             }
         }
     }
 
-    public String hashPageName(String pageName) {
-        return JUtils.MD5(pageName.getBytes());
+    public String hashPageName(String pageName) throws NoSuchAlgorithmException {
+        return Sha1.sha1(pageName);
     }
 
 }

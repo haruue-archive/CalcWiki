@@ -3,6 +3,8 @@ package org.calcwiki.data.model;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.annotation.JSONType;
 
+import org.calcwiki.data.storage.CurrentUser;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -172,7 +174,9 @@ public class QueryModel {
                         public String level;
                         @JSONField(name = "expiry")
                         public String expiry;
+
                     }
+
                 }
             }
         }

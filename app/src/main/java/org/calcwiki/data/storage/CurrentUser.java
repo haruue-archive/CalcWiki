@@ -3,9 +3,12 @@ package org.calcwiki.data.storage;
 import android.app.Activity;
 import android.content.SharedPreferences;
 
+import com.jude.utils.JUtils;
+
 import org.calcwiki.R;
 import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.data.model.QueryModel;
+import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.util.Utils;
 
@@ -27,6 +30,15 @@ public class CurrentUser implements Serializable {
     public String lgtoken;
     public boolean isLogin;
     public boolean hasNetWork;
+    public int groups;
+
+    public static class UserGroup {
+        public final static int USER = 1;
+        public final static int AUTOCONFIRMED = 2;
+        public final static int SYSOP = 4;
+        public final static int CHECKUSER = 8;
+        public final static int BUREAUCRAT = 16;
+    }
 
     public static CurrentUser getInstance() {
         if (currentUser == null) {
@@ -43,6 +55,7 @@ public class CurrentUser implements Serializable {
         email = sharedPreferences.getString("email", "");
         userId = sharedPreferences.getInt("userId", -1);
         lgtoken = sharedPreferences.getString("lgtoken", "");
+        groups = sharedPreferences.getInt("groups", 0);
         if (userId == -1 || name.equals("")) {
             isLogin = false;
             Utils.getIP(new Action1<String>() {
@@ -73,6 +86,7 @@ public class CurrentUser implements Serializable {
         editor.putInt("userId", userId);
         editor.putString("email", email);
         editor.putString("lgtoken", lgtoken);
+        editor.putInt("groups", groups);
         editor.apply();
     }
 
@@ -100,8 +114,24 @@ public class CurrentUser implements Serializable {
         name = userInfo.name;
         userId = userInfo.id;
         email = userInfo.email;
+        isLogin = true;
+        refreshGroupsState(userInfo);
         CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
         saveBaseInfoToSharedPreferences();
+    }
+
+    private void refreshGroupsState(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo) {
+        groups = 0;
+        if (userInfo.groups.contains("user"))
+            groups |= UserGroup.USER;
+        if (userInfo.groups.contains("autoconfirmed") || userInfo.groups.contains("初级善意推定"))
+            groups |= UserGroup.AUTOCONFIRMED;
+        if (userInfo.groups.contains("sysop"))
+            groups |= UserGroup.SYSOP;
+        if (userInfo.groups.contains("checkuser"))
+            groups |= UserGroup.CHECKUSER;
+        if (userInfo.groups.contains("bureaucrat"))
+            groups |= UserGroup.BUREAUCRAT;
     }
 
     public void refreshCurrentUser() {

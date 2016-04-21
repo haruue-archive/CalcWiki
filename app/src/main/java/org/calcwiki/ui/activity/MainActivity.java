@@ -21,6 +21,7 @@ import com.jude.utils.JUtils;
 
 import org.calcwiki.BuildConfig;
 import org.calcwiki.R;
+import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentFragment;
 import org.calcwiki.data.storage.CurrentUser;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         });
         searchEditText.setOnKeyListener(listener);
         CurrentUserChangeCaller.getInstance().addCurrentUserListener(this);
+        CurrentUser.getInstance().refreshCurrentUser();
+        QueryApiHelper.getBaseUserInfo(listener);
     }
 
     @Override
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         invalidateOptionsMenu();
     }
 
-    public class Listener implements Toolbar.OnMenuItemClickListener, View.OnKeyListener {
+    public class Listener implements Toolbar.OnMenuItemClickListener, View.OnKeyListener, QueryApiHelper.OnGetBaseUserInfoListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -146,6 +149,11 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
                     break;
             }
             return false;
+        }
+
+        @Override
+        public void onGetBaseUserInfo() {
+
         }
     }
 
