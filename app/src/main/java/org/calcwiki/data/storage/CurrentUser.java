@@ -1,8 +1,5 @@
 package org.calcwiki.data.storage;
 
-import android.app.Activity;
-import android.content.SharedPreferences;
-
 import com.jude.utils.JUtils;
 
 import org.calcwiki.R;
@@ -10,11 +7,10 @@ import org.calcwiki.data.model.LoginModel;
 import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
+import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
 import org.calcwiki.util.Utils;
 
 import java.io.Serializable;
-
-import rx.functions.Action1;
 
 /**
  * 登陆后的用户信息存储
@@ -24,13 +20,10 @@ import rx.functions.Action1;
 public class CurrentUser implements Serializable {
 
     private static CurrentUser currentUser;
-    public String name;
-    public String email;
-    public int userId;
-    public String lgtoken;
-    public boolean isLogin;
-    public boolean hasNetWork;
-    public int groups;
+    private QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo;
+    private boolean hasNetWork;
+    private int groups;
+    private Listener listener;
 
     public static class UserGroup {
         public final static int USER = 1;
@@ -49,78 +42,20 @@ public class CurrentUser implements Serializable {
     }
 
     private void init() {
-        SharedPreferences sharedPreferences = Utils.getApplication().getSharedPreferences("CurrentUser", Activity.MODE_PRIVATE);
-        // Try to get name, if not exist, use IP instead, if not available, use "not login" instead
-        name = sharedPreferences.getString("username", "");
-        email = sharedPreferences.getString("email", "");
-        userId = sharedPreferences.getInt("userId", -1);
-        lgtoken = sharedPreferences.getString("lgtoken", "");
-        groups = sharedPreferences.getInt("groups", 0);
-        if (userId == -1 || name.equals("")) {
-            isLogin = false;
-            Utils.getIP(new Action1<String>() {
-                @Override
-                public void call(String s) {
-                    if (s.equals("")) {
-                        name = Utils.getApplication().getString(R.string.no_network);
-                        email = Utils.getApplication().getString(R.string.please_cleck_network);
-                        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
-                        hasNetWork = false;
-                    } else {
-                        name = s;
-                        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
-                        hasNetWork = true;
-                    }
-                }
-            });
-        } else {
-            isLogin = true;
-            hasNetWork = true;
-            CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
-        }
-    }
-
-    public void saveBaseInfoToSharedPreferences() {
-        SharedPreferences.Editor editor = Utils.getApplication().getSharedPreferences("CurrentUser", Activity.MODE_PRIVATE).edit();
-        editor.putString("username", name);
-        editor.putInt("userId", userId);
-        editor.putString("email", email);
-        editor.putString("lgtoken", lgtoken);
-        editor.putInt("groups", groups);
-        editor.apply();
+        listener = new Listener();
+        refreshCurrentUser();
     }
 
     public void onLoginSuccess(LoginModel.Success userInfo) {
-        name = userInfo.login.lgusername;
-        userId = userInfo.login.lguserid;
-        lgtoken = userInfo.login.lgtoken;
-        isLogin = true;
-        hasNetWork = true;
-        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+        refreshCurrentUser();
     }
 
     public void onLogout() {
-        userId = -1;
-        name = "";
-        email = "";
-        lgtoken = "";
-        isLogin = false;
-        saveBaseInfoToSharedPreferences();
-        init();
-        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+        refreshCurrentUser();
+        groups = 0;
     }
 
-    public void setBaseUserInfo(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo) {
-        name = userInfo.name;
-        userId = userInfo.id;
-        email = userInfo.email;
-        isLogin = true;
-        refreshGroupsState(userInfo);
-        CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
-        saveBaseInfoToSharedPreferences();
-    }
-
-    private void refreshGroupsState(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo) {
+    private void refreshGroupsState() {
         groups = 0;
         if (userInfo.groups.contains("user"))
             groups |= UserGroup.USER;
@@ -135,11 +70,74 @@ public class CurrentUser implements Serializable {
     }
 
     public void refreshCurrentUser() {
-        init();
+        QueryApiHelper.getBaseUserInfo(listener);
     }
 
     public static void restoreInstance(Serializable instance) {
         currentUser = (CurrentUser) instance;
         CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+    }
+
+    class Listener implements QueryApiHelper.OnGetBaseUserInfoListener, NetworkConnectivityReceiver.OnNetworkStateChangeListener, Serializable {
+
+        @Override
+        public void onGetBaseUserInfoSuccess(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo) {
+            CurrentUser.this.userInfo = userInfo;
+            CurrentUser.this.hasNetWork = true;
+            refreshGroupsState();
+            CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+        }
+
+        @Override
+        public void onGetBaseUserInfoFailure(int reason) {
+            switch (reason) {
+                case QueryApiHelper.GetBaseUserInfoFailureReason.NETWORK_ERROR:
+                    hasNetWork = false;
+                    break;
+                case QueryApiHelper.GetBaseUserInfoFailureReason.SERVER_ERROR:
+                    hasNetWork = true;
+                    JUtils.Toast(Utils.getApplication().getResources().getString(R.string.server_exception_and_try_again));
+                    CurrentUser.this.userInfo = null;
+                    break;
+            }
+            CurrentUserChangeCaller.getInstance().notifyCurrentUserChange();
+        }
+
+        @Override
+        public void onNetworkStateChange(boolean hasNetwork) {
+            if (!CurrentUser.this.hasNetWork && !hasLogin() && hasNetwork) {
+                refreshCurrentUser();
+            }
+        }
+    }
+
+    public QueryModel.UserInfo.QueryEntity.UserinfoEntity getUserInfo() {
+        return userInfo;
+    }
+
+    public String getName() {
+        if (userInfo == null) {
+            return null;
+        }
+        return userInfo.name;
+    }
+
+    public String getEmail() {
+        if (userInfo == null) {
+            return null;
+        }
+        return userInfo.email;
+    }
+
+    public boolean hasNetWork() {
+        return hasNetWork;
+    }
+
+    public int getGroups() {
+        return groups;
+    }
+
+    public boolean hasLogin() {
+        return (groups & UserGroup.USER) != 0;
     }
 }

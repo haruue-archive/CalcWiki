@@ -108,7 +108,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
         if (CurrentPage.getInstance().getMoveable()) {
             state |= MainActivity.OptionsMenuButtons.ACTION_MOVE;
         }
-        if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.SYSOP) != 0) {
+        if ((CurrentUser.getInstance().getGroups() & CurrentUser.UserGroup.SYSOP) != 0) {
             state |= MainActivity.OptionsMenuButtons.ACTION_DELETE;
         }
         ((MainActivity) getActivity()).setOptionsMenuStatus(state);
@@ -116,7 +116,7 @@ public class PageFragment extends CurrentFragment.InitializibleFragment {
 
     public void refreshOptionButtonOnGetPageFailure() {
         int state = MainActivity.OptionsMenuButtons.ACTION_SEARCH;
-        if (getPageFailureReason == PageCacheController.PageCacheControllerFailedReason.PAGE_NOT_EXIST && CurrentUser.getInstance().isLogin) {
+        if (getPageFailureReason == PageCacheController.PageCacheControllerFailedReason.PAGE_NOT_EXIST && CurrentUser.getInstance().hasLogin()) {
             state |= MainActivity.OptionsMenuButtons.ACTION_CREATE;
         }
         ((MainActivity) getActivity()).setOptionsMenuStatus(state);

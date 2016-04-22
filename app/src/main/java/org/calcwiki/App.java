@@ -14,7 +14,7 @@ import org.calcwiki.util.Utils;
 public class App extends Application {
 
     public enum ObjectStorageDirs {
-        Cookie, Page
+        Cookie, Page, User
     }
 
     @Override

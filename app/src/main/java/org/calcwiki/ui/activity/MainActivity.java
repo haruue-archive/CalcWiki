@@ -89,7 +89,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         searchEditText.setOnKeyListener(listener);
         CurrentUserChangeCaller.getInstance().addCurrentUserListener(this);
         CurrentUser.getInstance().refreshCurrentUser();
-        QueryApiHelper.getBaseUserInfo(listener);
     }
 
     @Override
@@ -117,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         invalidateOptionsMenu();
     }
 
-    public class Listener implements Toolbar.OnMenuItemClickListener, View.OnKeyListener, QueryApiHelper.OnGetBaseUserInfoListener {
+    public class Listener implements Toolbar.OnMenuItemClickListener, View.OnKeyListener {
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -151,10 +150,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
             return false;
         }
 
-        @Override
-        public void onGetBaseUserInfo() {
-
-        }
     }
 
     @Override
@@ -166,11 +161,7 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         if (currentOptionsMenuStatus == -1) {
-            if (CurrentUser.getInstance().isLogin) {
-                currentOptionsMenuStatus = OptionsMenuButtons.ACTION_SEARCH | OptionsMenuButtons.ACTION_VIEW_SOURCE | OptionsMenuButtons.ACTION_HISTORY;
-            } else {
-                currentOptionsMenuStatus = OptionsMenuButtons.ACTION_SEARCH | OptionsMenuButtons.ACTION_EDIT | OptionsMenuButtons.ACTION_HISTORY | OptionsMenuButtons.ACTION_MOVE;
-            }
+            currentOptionsMenuStatus = OptionsMenuButtons.ACTION_SEARCH | OptionsMenuButtons.ACTION_VIEW_SOURCE | OptionsMenuButtons.ACTION_HISTORY;
         }
         menu.findItem(R.id.action_search).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_SEARCH) != 0);
         menu.findItem(R.id.action_edit).setVisible((currentOptionsMenuStatus & OptionsMenuButtons.ACTION_EDIT) != 0);

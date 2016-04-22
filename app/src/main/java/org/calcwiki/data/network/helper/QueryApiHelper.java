@@ -1,12 +1,10 @@
 package org.calcwiki.data.network.helper;
 
 import com.alibaba.fastjson.JSON;
-import com.jude.utils.JUtils;
 
 import org.calcwiki.data.model.QueryModel;
 import org.calcwiki.data.network.api.MediaWikiInterceptor;
 import org.calcwiki.data.network.api.RestApi;
-import org.calcwiki.data.storage.CurrentUser;
 
 import rx.Observer;
 import rx.Subscriber;
@@ -21,7 +19,13 @@ import rx.schedulers.Schedulers;
 public class QueryApiHelper {
 
     public interface OnGetBaseUserInfoListener {
-        void onGetBaseUserInfo();
+        void onGetBaseUserInfoSuccess(QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo);
+        void onGetBaseUserInfoFailure(int reason);
+    }
+
+    public class GetBaseUserInfoFailureReason {
+        public final static int NETWORK_ERROR = 1;
+        public final static int SERVER_ERROR = 2;
     }
 
     public static void getBaseUserInfo(OnGetBaseUserInfoListener listener) {
@@ -44,12 +48,17 @@ public class QueryApiHelper {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
+                        listener.onGetBaseUserInfoFailure(GetPageInfoFailureReason.NETWORK_ERROR);
                     }
 
                     @Override
                     public void onNext(String s) {
-                        CurrentUser.getInstance().setBaseUserInfo(JSON.parseObject(s, QueryModel.UserInfo.class).query.userinfo);
-                        listener.onGetBaseUserInfo();
+                        QueryModel.UserInfo data = JSON.parseObject(s, QueryModel.UserInfo.class);
+                        if (data != null && data.query != null && data.query.userinfo != null) {
+                            listener.onGetBaseUserInfoSuccess(data.query.userinfo);
+                        } else {
+                            listener.onGetBaseUserInfoFailure(GetPageInfoFailureReason.SERVER_ERROR);
+                        }
                     }
                 });
     }

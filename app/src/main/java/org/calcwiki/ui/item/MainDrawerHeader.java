@@ -14,7 +14,7 @@ import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.activity.LoginActivity;
 import org.calcwiki.ui.activity.RegisterActivity;
 import org.calcwiki.ui.dialog.LogoutDialog;
-import org.calcwiki.ui.receiver.NetworkConnectivityReceiver;
+import org.calcwiki.util.Utils;
 
 /**
  * Drawer 的头部视图
@@ -32,6 +32,7 @@ public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {
     ButtonFlat registerButton;
     ButtonFlat logoutButton;
     ButtonFlat accountManageButton;
+    Listener listener = new Listener();
 
     public static MainDrawerHeader getInstance() {
         if (mainDrawerHeader == null) {
@@ -55,8 +56,7 @@ public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {
         accountManageButton = (ButtonFlat) headerView.findViewById(R.id.account_manage_button_in_drawer_main);
         onBindView(headerView);
         // Add outer listener
-        CurrentUserChangeCaller.getInstance().addCurrentUserListener(new Listener());
-        NetworkConnectivityReceiver.addNetworkStateChangeListener(new Listener());
+        CurrentUserChangeCaller.getInstance().addCurrentUserListener(listener);
         // First Time Refresh
         CurrentUser.getInstance().refreshCurrentUser();
         return headerView;
@@ -72,13 +72,18 @@ public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {
     }
 
     public void reload() {
-        usernameTextView.setText(CurrentUser.getInstance().name);
-        emailTextView.setText(CurrentUser.getInstance().email);
-        if (CurrentUser.getInstance().isLogin) {
-            setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
-        } else if (CurrentUser.getInstance().hasNetWork) {
-            setAccountManageButtonMode(AccountManageButtonMode.NO_LOGIN);
-        } else if (!CurrentUser.getInstance().hasNetWork) {
+        if (CurrentUser.getInstance().hasNetWork()) {
+            usernameTextView.setText(CurrentUser.getInstance().getName());
+            if (CurrentUser.getInstance().hasLogin()) {
+                setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
+                emailTextView.setText(CurrentUser.getInstance().getEmail());
+            } else {
+                setAccountManageButtonMode(AccountManageButtonMode.NO_LOGIN);
+                emailTextView.setText(Utils.getApplication().getResources().getString(R.string.not_login));
+            }
+        } else {
+            usernameTextView.setText(Utils.getApplication().getResources().getString(R.string.no_network));
+            emailTextView.setText(Utils.getApplication().getResources().getString(R.string.please_cleck_network));
             setAccountManageButtonMode(AccountManageButtonMode.NO_NETWORK);
         }
     }
@@ -138,15 +143,7 @@ public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {
         }
     }
 
-    class Listener implements NetworkConnectivityReceiver.OnNetworkStateChangeListener, CurrentUserChangeCaller.CurrentUserChangeListener {
-
-        @Override
-        public void onNetworkStateChange(boolean hasNetwork) {
-            if (hasNetwork || !CurrentUser.getInstance().isLogin) {
-                CurrentUser.getInstance().hasNetWork = true;
-                CurrentUser.getInstance().refreshCurrentUser();
-            }
-        }
+    class Listener implements CurrentUserChangeCaller.CurrentUserChangeListener {
 
         @Override
         public void onCurrentUserChange() {

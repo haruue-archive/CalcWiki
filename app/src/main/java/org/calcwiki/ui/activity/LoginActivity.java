@@ -19,6 +19,8 @@ import org.calcwiki.R;
 import org.calcwiki.data.network.helper.LoginApiHelper;
 import org.calcwiki.data.network.helper.QueryApiHelper;
 import org.calcwiki.data.storage.CurrentLogin;
+import org.calcwiki.data.storage.CurrentUser;
+import org.calcwiki.data.storage.changecaller.CurrentUserChangeCaller;
 import org.calcwiki.ui.util.CurrentStateStorager;
 
 public class LoginActivity extends AppCompatActivity {
@@ -38,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         // Init Utils
         JUtils.setDebug(BuildConfig.DEBUG, this.getClass().getName());
         initializeUI(savedInstanceState);
+        CurrentUserChangeCaller.getInstance().addCurrentUserListener(listener);
     }
 
     void initializeUI(Bundle savedInstanceState) {
@@ -64,13 +67,13 @@ public class LoginActivity extends AppCompatActivity {
         forgetPasswordButton.setOnClickListener(listener);
     }
 
-    private class Listener implements View.OnClickListener, LoginApiHelper.LoginApiHelperListener, QueryApiHelper.OnGetBaseUserInfoListener {
+    private class Listener implements View.OnClickListener, LoginApiHelper.LoginApiHelperListener, CurrentUserChangeCaller.CurrentUserChangeListener {
 
         ProgressDialog progressDialog;
 
         @Override
         public void onLoginSuccess() {
-            QueryApiHelper.getBaseUserInfo(this);
+            CurrentUser.getInstance().refreshCurrentUser();
         }
 
         @Override
@@ -128,12 +131,14 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onGetBaseUserInfo() {
-            if (progressDialog != null) {
-                progressDialog.dismiss();
+        public void onCurrentUserChange() {
+            if (CurrentUser.getInstance().hasLogin()) {
+                if (progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                finish();
+                JUtils.Toast(getResources().getString(R.string.login_success));
             }
-            finish();
-            JUtils.Toast(getResources().getString(R.string.login_success));
         }
     }
 
@@ -175,6 +180,12 @@ public class LoginActivity extends AppCompatActivity {
                 return true;
         }
         return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CurrentUserChangeCaller.getInstance().removeCurrentUserListener(listener);
     }
 
     public static void startAction(Context context, String defaultUsername) {

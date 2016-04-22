@@ -52,7 +52,7 @@ public class CurrentPage implements Serializable {
     }
 
     public boolean getEditable() {
-        if (!CurrentUser.getInstance().isLogin) {
+        if (!CurrentUser.getInstance().hasLogin()) {
             return false;
         }
         if (pageInfo.query.pages.content.protection == null || pageInfo.query.pages.content.protection.isEmpty()) {
@@ -60,10 +60,10 @@ public class CurrentPage implements Serializable {
         }
         for (QueryModel.PageInfo.QueryEntity.PagesEntity.NumEntity.ProtectionEntity i: pageInfo.query.pages.content.protection) {
             if (i.type.equals("edit")) {
-                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.AUTOCONFIRMED) != 0 && i.level.equals("autoconfirmed")) {
+                if ((CurrentUser.getInstance().getGroups() & CurrentUser.UserGroup.AUTOCONFIRMED) != 0 && i.level.equals("autoconfirmed")) {
                     return true;
                 }
-                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.SYSOP) != 0 && (i.level.equals("autoconfirmed") || i.level.equals("sysop"))) {
+                if ((CurrentUser.getInstance().getGroups() & CurrentUser.UserGroup.SYSOP) != 0 && (i.level.equals("autoconfirmed") || i.level.equals("sysop"))) {
                     return true;
                 }
             }
@@ -72,7 +72,7 @@ public class CurrentPage implements Serializable {
     }
 
     public boolean getMoveable() {
-        if (!CurrentUser.getInstance().isLogin) {
+        if (!CurrentUser.getInstance().hasLogin()) {
             return false;
         }
         if (pageInfo.query.pages.content.protection == null || pageInfo.query.pages.content.protection.isEmpty()) {
@@ -80,10 +80,10 @@ public class CurrentPage implements Serializable {
         }
         for (QueryModel.PageInfo.QueryEntity.PagesEntity.NumEntity.ProtectionEntity i: pageInfo.query.pages.content.protection) {
             if (i.type.equals("move")) {
-                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.AUTOCONFIRMED) != 0 && i.level.equals("autoconfirmed")) {
+                if ((CurrentUser.getInstance().getGroups() & CurrentUser.UserGroup.AUTOCONFIRMED) != 0 && i.level.equals("autoconfirmed")) {
                     return true;
                 }
-                if ((CurrentUser.getInstance().groups & CurrentUser.UserGroup.SYSOP) != 0 && (i.level.equals("autoconfirmed") || i.level.equals("sysop"))) {
+                if ((CurrentUser.getInstance().getGroups() & CurrentUser.UserGroup.SYSOP) != 0 && (i.level.equals("autoconfirmed") || i.level.equals("sysop"))) {
                     return true;
                 }
             }

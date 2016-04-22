@@ -16,7 +16,7 @@ public class QueryModel {
     /**
      * https://calcwiki.org/api.php?action=query&meta=userinfo&uiprop=blockinfo|hasmsg|groups|editcount|email|realname|unreadcount
      */
-    public static class UserInfo {
+    public static class UserInfo implements Serializable {
 
         /**
          * batchcomplete :
@@ -32,7 +32,7 @@ public class QueryModel {
         @JSONField(name = "query")
         public QueryEntity query;
 
-        public static class QueryEntity {
+        public static class QueryEntity implements Serializable {
             /**
              * id : 9
              * name : 春上冰月
@@ -47,7 +47,7 @@ public class QueryModel {
             @JSONField(name = "userinfo")
             public UserinfoEntity userinfo;
 
-            public static class UserinfoEntity {
+            public static class UserinfoEntity implements Serializable {
                 @JSONField(name = "id")
                 public int id;
                 @JSONField(name = "name")
