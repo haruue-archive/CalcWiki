@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements CurrentUserChange
         });
         searchEditText.setOnKeyListener(listener);
         CurrentUserChangeCaller.getInstance().addCurrentUserListener(this);
-        CurrentUser.getInstance().refreshCurrentUser();
     }
 
     @Override

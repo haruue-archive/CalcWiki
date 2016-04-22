@@ -21,7 +21,7 @@ public class CurrentUser implements Serializable {
 
     private static CurrentUser currentUser;
     private QueryModel.UserInfo.QueryEntity.UserinfoEntity userInfo;
-    private boolean hasNetWork;
+    private boolean hasNetWork = true;
     private int groups;
     private Listener listener;
 

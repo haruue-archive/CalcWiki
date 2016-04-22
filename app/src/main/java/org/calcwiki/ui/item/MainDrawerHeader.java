@@ -57,8 +57,6 @@ public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {
         onBindView(headerView);
         // Add outer listener
         CurrentUserChangeCaller.getInstance().addCurrentUserListener(listener);
-        // First Time Refresh
-        CurrentUser.getInstance().refreshCurrentUser();
         return headerView;
     }
 
@@ -73,7 +71,11 @@ public class MainDrawerHeader implements RecyclerArrayAdapter.ItemView {
 
     public void reload() {
         if (CurrentUser.getInstance().hasNetWork()) {
-            usernameTextView.setText(CurrentUser.getInstance().getName());
+            if (CurrentUser.getInstance().getName() != null) {
+                usernameTextView.setText(CurrentUser.getInstance().getName());
+            } else {
+                usernameTextView.setText(Utils.getApplication().getResources().getString(R.string.loading_user_info));
+            }
             if (CurrentUser.getInstance().hasLogin()) {
                 setAccountManageButtonMode(AccountManageButtonMode.HAS_LOGIN);
                 emailTextView.setText(CurrentUser.getInstance().getEmail());
